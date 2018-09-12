@@ -109,12 +109,6 @@ class ScoreScreen : AppCompatActivity() {
         })
     }
     
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main2, menu)
-        return true
-    }
-    
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when(item.itemId){
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
