@@ -82,11 +82,11 @@ fun newPlayerID(context: Context):Int{
 
 const val THROW_ID_ID = "throwID"
 
-fun newThrowID(context: Context):Int{
+/*fun newThrowID(context: Context):Int{
     val id = getPrefInt(context, THROW_ID_ID)
     putPrefInt(context, THROW_ID_ID, id + 1)
     return id
-}
+}*/
 
 fun putPrefInt(context: Context, key: String, value: Int) = with(PreferenceManager.getDefaultSharedPreferences(context).edit()){
     putInt(key, value).apply()
