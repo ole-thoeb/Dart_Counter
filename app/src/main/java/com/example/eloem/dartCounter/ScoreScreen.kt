@@ -1,14 +1,11 @@
 package com.example.eloem.dartCounter
 
-import android.app.Activity
 import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
-
 import android.os.Bundle
 import android.support.v4.app.*
 import android.support.v4.view.ViewPager
 import android.util.SparseArray
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +13,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.example.eloem.dartCounter.helperClasses.games.DartGame
 import com.example.eloem.dartCounter.util.getOutGame
-
 import kotlinx.android.synthetic.main.activity_score_screen.*
 import kotlinx.android.synthetic.main.diagram_spinner.*
 
@@ -109,19 +105,12 @@ class ScoreScreen : AppCompatActivity() {
         })
     }
     
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main2, menu)
-        return true
-    }
-    
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when(item.itemId){
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         R.id.home -> true
         
-        R.id.action_settings -> true
         else -> super.onOptionsItemSelected(item)
     }
     
