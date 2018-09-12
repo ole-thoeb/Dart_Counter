@@ -1,5 +1,6 @@
 package com.example.eloem.dartCounter
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -19,7 +20,7 @@ import emil.beothy.widget.BetterEditText
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : Activity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

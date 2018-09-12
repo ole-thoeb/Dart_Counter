@@ -1,5 +1,6 @@
 package com.example.eloem.dartCounter
 
+import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -15,7 +16,7 @@ import emil.beothy.utilFun.deepCopy
 import kotlinx.android.synthetic.main.activity_list_of_games.*
 import java.util.*
 
-class ListOfGamesActivity : AppCompatActivity() {
+class ListOfGamesActivity : Activity() {
     lateinit var games: MutableList<DartGame>
     
     override fun onCreate(savedInstanceState: Bundle?) {
