@@ -8,125 +8,131 @@
     tools:context=".GameActivity"
     android:clipToPadding="false">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_weight="1"
-            android:background="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
-
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="@dimen/standardPadding">
-
-                <TextView
-                    android:id="@+id/currentPlayer"
-                    style="@style/OneLineTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Emil"
-                    android:textSize="@dimen/standardTextSize" />
-
-                <TextView
-                    android:id="@+id/currentPlayerScore"
-                    style="@style/OneLineTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="260"
-                    android:textAlignment="textEnd"
-                    android:textSize="@dimen/standardTextSize" />
-
-            </LinearLayout>
-
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
-
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/scrollView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/standardPadding">
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_weight="1"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/standardPadding">
+
+                    <TextView
+                        android:id="@+id/currentPlayer"
+                        style="@style/OneLineTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Emil"
+                        android:textSize="@dimen/standardTextSize" />
+
+                    <TextView
+                        android:id="@+id/currentPlayerScore"
+                        style="@style/OneLineTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="260"
+                        android:textAlignment="textEnd"
+                        android:textSize="@dimen/standardTextSize" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/standardPadding"
-                android:weightSum="3">
+                android:orientation="vertical"
+                android:padding="@dimen/standardPadding">
 
-                <TextView
-                    android:id="@+id/throw1TV"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/bigPadding"
-                    android:layout_weight="1"
-                    android:background="@drawable/inactive_background"
-                    android:onClick="onClick"
-                    android:paddingVertical="@dimen/standardPadding"
-                    android:textAlignment="center"
-                    android:textSize="@dimen/standardTextSize" />
+                    android:padding="@dimen/standardPadding"
+                    android:weightSum="3">
 
-                <TextView
-                    android:id="@+id/throw2TV"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/bigPadding"
-                    android:layout_weight="1"
-                    android:background="@drawable/inactive_background"
-                    android:onClick="onClick"
-                    android:paddingVertical="@dimen/standardPadding"
-                    android:textAlignment="center"
-                    android:textSize="@dimen/standardTextSize" />
+                    <TextView
+                        android:id="@+id/throw1TV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/bigPadding"
+                        android:layout_weight="1"
+                        android:background="@drawable/inactive_background"
+                        android:onClick="onClick"
+                        android:paddingVertical="@dimen/standardPadding"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/standardTextSize" />
 
-                <TextView
-                    android:id="@+id/throw3TV"
-                    android:layout_width="0dp"
+                    <TextView
+                        android:id="@+id/throw2TV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/bigPadding"
+                        android:layout_weight="1"
+                        android:background="@drawable/inactive_background"
+                        android:onClick="onClick"
+                        android:paddingVertical="@dimen/standardPadding"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/standardTextSize" />
+
+                    <TextView
+                        android:id="@+id/throw3TV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/bigPadding"
+                        android:layout_weight="1"
+                        android:background="@drawable/inactive_background"
+                        android:onClick="onClick"
+                        android:paddingVertical="@dimen/standardPadding"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/standardTextSize" />
+
+                </LinearLayout>
+
+                <com.example.eloem.dartCounter.helperClasses.DartBoard
+                    android:id="@+id/board"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:id="@+id/allPlayerList"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/bigPadding"
-                    android:layout_weight="1"
-                    android:background="@drawable/inactive_background"
-                    android:onClick="onClick"
-                    android:paddingVertical="@dimen/standardPadding"
-                    android:textAlignment="center"
-                    android:textSize="@dimen/standardTextSize" />
+                    android:orientation="vertical" />
+
+                <!-- spacer, damit der untere teil nicht unter dem bottom sheet verschwindet -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="68dp"/>
 
             </LinearLayout>
 
-            <com.example.eloem.dartCounter.helperClasses.DartBoard
-                android:id="@+id/board"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <LinearLayout
-                android:id="@+id/allPlayerList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
-
-            <!-- spacer, damit der untere teil nicht unter dem bottom sheet verschwindet -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="68dp"/>
-
-        </LinearLayout>
-
     </android.support.v4.widget.NestedScrollView>
+
+    </LinearLayout>
 
     <include layout="@layout/game_activity_bottom_sheet"/>
 

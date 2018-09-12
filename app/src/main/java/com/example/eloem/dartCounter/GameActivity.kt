@@ -42,9 +42,6 @@ class GameActivity : Activity() {
         setCurrentTextView(currentTextView, 0)
         throwPoints = Turn(Array(throwTextView.size){ DartGame.Point.instanceByPoints(1, 0) })
         
-        toolbar.setNavigationOnClickListener { NavUtils.navigateUpFromSameTask(this) }
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
-        
         list.apply {
             adapter = ListAdapter(listOf())
             adapter.registerDataSetObserver(object : DataSetObserver(){
