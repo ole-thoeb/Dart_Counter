@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/gameList"
+        android:title="@string/menuListOfGames"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/deleteAllGames"
+        android:title="@string/menuDeleteAllGames"
+        app:showAsAction="never"/>
+
+</menu>

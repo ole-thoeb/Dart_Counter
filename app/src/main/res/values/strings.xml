@@ -1,0 +1,77 @@
+<resources>
+    <string name="app_name">Dart zähler</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="newPlayer">neuer Spieler</string>
+    <string name="player">Spieler</string>
+
+    <string name="nextPlayer">Nächster Spieler</string>
+
+    <string name="noPlayer">Du must mindestens ein Spieler hinzufügen</string>
+
+    <string name="winMessage">%1$s hat gewonnen</string>
+    <string name="drawMessage">Gleichstand zwischen %1$s </string>
+
+    <string name="closingPossible">Checken Möglich!</string>
+    <string name="closingNotPossible">Closen nicht Möglich!</string>
+
+    <string name="menuListOfGames">Spielliste</string>
+    <string name="menuDeleteAllGames">Alle Spiele löschen</string>
+    <string name="menuDeleteRunningGames">Laufende Spiele löschen</string>
+    <string name="menuDeleteFinishedGames">Beendete Spiele löschen</string>
+    <string name="menuRevenge">Revanche</string>
+
+    <string name="cardPlayers">Spieler: %1$d</string>
+    <string name="onGoingGame">laufend</string>
+    <string name="cardWinner">Gewinner: %1$s</string>
+
+    <string name="error">ERROR</string>
+    <string name="done">Fertig</string>
+
+    <string name="delete">Löschen</string>
+
+    <string name="buttonPositive">Jep</string>
+    <string name="buttonNegative">Nope</string>
+
+    <string-array name="modes">
+        <item>Single Out</item>
+        <item>Double Out</item>
+        <item>Master Out</item>
+    </string-array>
+
+    <integer-array name="startingPoints">
+        <item>301</item>
+        <item>401</item>
+        <item>501</item>
+        <item>601</item>
+        <item>701</item>
+        <item>801</item>
+        <item>901</item>
+        <item>1001</item>
+    </integer-array>
+
+    <string-array name="diagrams">
+        <item>Punktzahl</item>
+        <item>Würfe</item>
+        <item>Punktzahl und Würfe</item>
+    </string-array>
+
+    <string name="tab_text_overview">Übersicht</string>
+    <string name="tab_text_statistics">Statistik</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="and">und</string>
+    <string name="gameDate">Spiel vom: %1$s</string>
+    <string name="turn">Würfe %1$s</string>
+    <string name="points">Punkte %1$s</string>
+
+    <string name="average">Durchschnittliche Punkte</string>
+    <string name="missedThrows">Verfehlte Würfe</string>
+    <string name="bustedPoints">Punkte bustet</string>
+    <string name="timesBusted">Anzahl der Busts</string>
+    <string name="mostHit">Häufigster Punkt</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

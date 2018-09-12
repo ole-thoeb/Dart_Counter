@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GameActivity"
+    android:clipToPadding="false">
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/standardPadding">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/standardPadding"
+                android:weightSum="3">
+
+                <TextView
+                    android:id="@+id/throw1TV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/bigPadding"
+                    android:layout_weight="1"
+                    android:background="@drawable/inactive_background"
+                    android:onClick="onClick"
+                    android:paddingVertical="@dimen/standardPadding"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/standardTextSize" />
+
+                <TextView
+                    android:id="@+id/throw2TV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/bigPadding"
+                    android:layout_weight="1"
+                    android:background="@drawable/inactive_background"
+                    android:onClick="onClick"
+                    android:paddingVertical="@dimen/standardPadding"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/standardTextSize" />
+
+                <TextView
+                    android:id="@+id/throw3TV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/bigPadding"
+                    android:layout_weight="1"
+                    android:background="@drawable/inactive_background"
+                    android:onClick="onClick"
+                    android:paddingVertical="@dimen/standardPadding"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/standardTextSize" />
+
+            </LinearLayout>
+
+            <com.example.eloem.dartCounter.helperClasses.DartBoard
+                android:id="@+id/board"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:id="@+id/allPlayerList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <!-- spacer, damit der untere teil nicht unter dem bottom sheet verschwindet -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="68dp"/>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <include layout="@layout/game_activity_bottom_sheet"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/confirmThrowFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_check_white"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_anchor="@id/bottomSheet"
+        app:layout_anchorGravity="end|top"/>
+
+</android.support.design.widget.CoordinatorLayout>

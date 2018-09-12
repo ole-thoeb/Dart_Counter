@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/deleteAllGames"
+        android:title="@string/menuDeleteAllGames"/>
+
+    <item android:id="@+id/deleteAllFinishedGames"
+        android:title="@string/menuDeleteFinishedGames"/>
+
+    <item android:id="@+id/deleteAllRunningGames"
+        android:title="@string/menuDeleteRunningGames"/>
+</menu>
