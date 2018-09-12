@@ -13,7 +13,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.example.eloem.dartCounter.helperClasses.games.DartGame
 import com.example.eloem.dartCounter.util.getOutGame
-
 import kotlinx.android.synthetic.main.activity_score_screen.*
 import kotlinx.android.synthetic.main.diagram_spinner.*
 
@@ -112,7 +111,6 @@ class ScoreScreen : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         R.id.home -> true
         
-        R.id.action_settings -> true
         else -> super.onOptionsItemSelected(item)
     }
     
