@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
@@ -93,7 +92,6 @@ class MainActivity : Activity() {
                 else -> false
             }
         }
-        toolbar.title = resources.getString(R.string.app_name)
     }
     
     private fun startGame(players: MutableList<Player>, pos: Int, startingPoints: Int){

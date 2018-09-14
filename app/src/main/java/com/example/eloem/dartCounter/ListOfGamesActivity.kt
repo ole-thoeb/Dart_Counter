@@ -23,7 +23,6 @@ class ListOfGamesActivity : Activity() {
         setContentView(R.layout.activity_list_of_games)
         
         toolbar.inflateMenu(R.menu.activity_list_of_games_menu)
-        toolbar.title = resources.getString(R.string.menuListOfGames)
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.deleteAllGames -> {

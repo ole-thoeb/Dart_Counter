@@ -19,7 +19,9 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_weight="1"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:titleTextAppearance="@style/MyTitleTextStyle"
+            app:title="@string/menuListOfGames"/>
 
     </android.support.design.widget.AppBarLayout>
 
