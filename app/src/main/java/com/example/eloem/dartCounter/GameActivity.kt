@@ -3,14 +3,11 @@ package com.example.eloem.dartCounter
 import android.app.Activity
 import android.content.Intent
 import android.database.DataSetObserver
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
-import android.support.v4.app.NavUtils
 import android.support.v7.app.AlertDialog
 import android.view.*
 import android.widget.BaseAdapter
-import android.widget.ListView
 import android.widget.TextView
 import com.example.eloem.dartCounter.helperClasses.*
 import com.example.eloem.dartCounter.helperClasses.games.DartGame
@@ -20,6 +17,7 @@ import com.example.eloem.dartCounter.util.updateNewTurn
 import kotlinx.android.synthetic.main.activity_game.*
 import kotlinx.android.synthetic.main.all_player_row.view.*
 import kotlinx.android.synthetic.main.game_activity_bottom_sheet.*
+import kotlinx.android.synthetic.main.turn_overview_list.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
@@ -178,7 +176,7 @@ class GameActivity : Activity() {
                 playerScoreTV.text = player.points.toString()
                 linLayout.setOnClickListener { _ ->
                     val layout = layoutInflater.inflate(R.layout.turn_overview_list, null)
-                    layout.findViewById<ListView>(R.id.turnList).adapter = HistoryTurnAdapter(player.history)
+                    layout.turnList.adapter = HistoryTurnAdapter(player.history)
         
                     AlertDialog.Builder(context)
                             .setTitle(player.name)

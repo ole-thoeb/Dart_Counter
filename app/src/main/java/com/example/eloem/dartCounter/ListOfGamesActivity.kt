@@ -2,7 +2,6 @@ package com.example.eloem.dartCounter
 
 import android.app.Activity
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.CardView
 import android.view.*
@@ -22,40 +21,39 @@ class ListOfGamesActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_of_games)
+        
+        toolbar.inflateMenu(R.menu.activity_list_of_games_menu)
+        toolbar.title = resources.getString(R.string.menuListOfGames)
+        toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.deleteAllGames -> {
+                    deleteAllGamesComplete(this)
+                    refreshList()
+                    true
+                }
+                R.id.deleteAllFinishedGames -> {
+                    for (game in games) {
+                        if (game.isFinished) deleteCompleteGame(this, game)
+                        refreshList()
+                    }
+                    true
+                }
+                R.id.deleteAllRunningGames -> {
+                    for (game in games) {
+                        if (!game.isFinished) deleteCompleteGame(this, game)
+                        refreshList()
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
     }
     
     override fun onResume() {
         super.onResume()
         
         refreshList()
-    }
-    
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.activity_list_of_games_menu, menu)
-        return true
-    }
-    
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean = when(item?.itemId){
-        R.id.deleteAllGames -> {
-            deleteAllGamesComplete(this)
-            refreshList()
-            true
-        }
-        R.id.deleteAllFinishedGames -> {
-            for (game in games){
-                if(game.isFinished)  deleteCompleteGame(this, game)
-                refreshList()
-            }
-            true
-        }
-        R.id.deleteAllRunningGames -> {
-            for (game in games){
-                if(!game.isFinished)  deleteCompleteGame(this, game)
-                refreshList()
-            }
-            true
-        }
-        else -> false
     }
     
     private fun refreshList(){

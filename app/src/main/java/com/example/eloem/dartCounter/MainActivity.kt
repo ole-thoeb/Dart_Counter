@@ -26,6 +26,8 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         
+        setUpToolbar()
+        
         val modeArray = resources.getStringArray(R.array.modes)
         val mAdapterModes = ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
@@ -61,27 +63,6 @@ class MainActivity : Activity() {
         }
     }
     
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.activity_main_menu, menu)
-        return true
-    }
-    
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean = when(item?.itemId){
-        R.id.gameList -> {
-            hideSoftKeyboard(this, this.currentFocus)
-    
-            val intent = Intent(this, ListOfGamesActivity::class.java)
-            startActivity(intent)
-        
-            true
-        }
-        R.id.deleteAllGames -> {
-            deleteAllGamesComplete(this)
-            true
-        }
-        else -> false
-    }
-    
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         outState?.putParcelableArray(KEY_LIST_DATA, (playerList.adapter as MyListAdapter).values.toTypedArray())
@@ -90,6 +71,29 @@ class MainActivity : Activity() {
     override fun onPause() {
         super.onPause()
         hideSoftKeyboard(this, currentFocus)
+    }
+    
+    private fun setUpToolbar(){
+        //set up toolbar
+        toolbar.inflateMenu(R.menu.activity_main_menu)
+        toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.gameList -> {
+                    hideSoftKeyboard(this, this.currentFocus)
+                
+                    val intent = Intent(this, ListOfGamesActivity::class.java)
+                    startActivity(intent)
+                
+                    true
+                }
+                R.id.deleteAllGames -> {
+                    deleteAllGamesComplete(this)
+                    true
+                }
+                else -> false
+            }
+        }
+        toolbar.title = resources.getString(R.string.app_name)
     }
     
     private fun startGame(players: MutableList<Player>, pos: Int, startingPoints: Int){

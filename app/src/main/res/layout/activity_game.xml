@@ -31,7 +31,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="@dimen/standardPadding">
+                    android:padding="@dimen/standardPadding"
+                    android:paddingEnd="@dimen/bigPadding">
 
                     <TextView
                         android:id="@+id/currentPlayer"
