@@ -14,6 +14,8 @@ import com.example.eloem.dartCounter.util.getOutGame
 import kotlinx.android.synthetic.main.fragment_overview.*
 import kotlinx.android.synthetic.main.list_item_overview.view.*
 import kotlinx.android.synthetic.main.player_list_item_overview.view.*
+import kotlinx.android.synthetic.main.statistic_card.*
+import kotlinx.android.synthetic.main.statistic_card.view.*
 
 /**
  * A simple [Fragment] subclass.
@@ -74,21 +76,24 @@ class OverviewFragment : Fragment() {
            })
         }
         
-        addData(averageLin) { it.averagePoints.toString() }
-        addData(bustedPLin) { it.pointsBusted.toString() }
-        addData(tBustedLin) { it.timesBusted.toString() }
-        addData(missedLin) { it.missedThrows.toString() }
-        addData(mostHitLin) { it.mostHitPoint.toString() }
+        addData(resources.getString(R.string.average)) { it.averagePoints.toString() }
+        addData(resources.getString(R.string.missedThrows)) { it.pointsBusted.toString() }
+        addData(resources.getString(R.string.bustedPoints)) { it.timesBusted.toString() }
+        addData(resources.getString(R.string.missedThrows)) { it.missedThrows.toString() }
+        addData(resources.getString(R.string.mostHit)) { it.mostHitPoint.toString() }
     }
     
-    private fun addData(view: LinearLayout, data: (Player) -> String){
+    private fun addData(title: String, data: (Player) -> String){
+        val card = layoutInflater.inflate(R.layout.statistic_card, listStatistic, false)
+        card.statisticTitle.text = title
         game.players.forEach {
-            view.addView(layoutInflater.inflate(R.layout.list_item_overview, view,
+            card.listStatistic.addView(layoutInflater.inflate(R.layout.list_item_overview, listStatistic,
                     false).apply {
                 playerNameTV.text = it.name
                 dataTV.text = data(it)
             })
         }
+        listOfStatistics.addView(card)
     }
     
     companion object {

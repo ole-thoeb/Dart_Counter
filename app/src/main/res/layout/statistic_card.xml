@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="@dimen/standardPadding"
+        app:cardCornerRadius="2dp"
+        android:layout_margin="@dimen/standardPadding">
+
+        <LinearLayout
+            android:id="@+id/listStatistic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="@dimen/standardPadding">
+
+            <TextView
+                android:id="@+id/statisticTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/titleTextSize"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>
