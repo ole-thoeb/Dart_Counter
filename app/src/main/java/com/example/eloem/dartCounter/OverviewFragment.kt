@@ -77,8 +77,8 @@ class OverviewFragment : Fragment() {
         }
         
         addData(resources.getString(R.string.average)) { it.averagePoints.toString() }
-        addData(resources.getString(R.string.missedThrows)) { it.pointsBusted.toString() }
-        addData(resources.getString(R.string.bustedPoints)) { it.timesBusted.toString() }
+        addData(resources.getString(R.string.bustedPoints)) { it.pointsBusted.toString() }
+        addData(resources.getString(R.string.timesBusted)) { it.timesBusted.toString() }
         addData(resources.getString(R.string.missedThrows)) { it.missedThrows.toString() }
         addData(resources.getString(R.string.mostHit)) { it.mostHitPoint.toString() }
     }
@@ -93,7 +93,7 @@ class OverviewFragment : Fragment() {
                 dataTV.text = data(it)
             })
         }
-        listOfStatistics.addView(card)
+        twoDivLin.addView(card)
     }
     
     companion object {

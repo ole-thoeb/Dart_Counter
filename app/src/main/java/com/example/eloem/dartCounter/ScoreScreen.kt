@@ -79,8 +79,7 @@ class ScoreScreen : AppCompatActivity() {
                             diagramSpinner?.adapter = ArrayAdapter<String>(this@ScoreScreen,
                                     R.layout.spinner_text_view,
                                     resources.getStringArray(R.array.diagrams)).apply {
-                                    setDropDownViewResource(
-                                            R.layout.support_simple_spinner_dropdown_item)
+                                    setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
                             }
                             diagramSpinner.onItemSelectedListener = object :AdapterView.OnItemSelectedListener{
                                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
