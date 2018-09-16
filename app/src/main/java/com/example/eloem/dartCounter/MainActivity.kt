@@ -1,9 +1,9 @@
 package com.example.eloem.dartCounter
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
@@ -19,11 +19,13 @@ import emil.beothy.widget.BetterEditText
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : Activity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        
+        setUpToolbar()
         
         val modeArray = resources.getStringArray(R.array.modes)
         val mAdapterModes = ArrayAdapter<String>(this,
@@ -60,27 +62,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
     
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.activity_main_menu, menu)
-        return true
-    }
-    
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean = when(item?.itemId){
-        R.id.gameList -> {
-            hideSoftKeyboard(this, this.currentFocus)
-    
-            val intent = Intent(this, ListOfGamesActivity::class.java)
-            startActivity(intent)
-        
-            true
-        }
-        R.id.deleteAllGames -> {
-            deleteAllGamesComplete(this)
-            true
-        }
-        else -> false
-    }
-    
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         outState?.putParcelableArray(KEY_LIST_DATA, (playerList.adapter as MyListAdapter).values.toTypedArray())
@@ -89,6 +70,28 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         hideSoftKeyboard(this, currentFocus)
+    }
+    
+    private fun setUpToolbar(){
+        //set up toolbar
+        toolbar.inflateMenu(R.menu.activity_main_menu)
+        toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.gameList -> {
+                    hideSoftKeyboard(this, this.currentFocus)
+                
+                    val intent = Intent(this, ListOfGamesActivity::class.java)
+                    startActivity(intent)
+                
+                    true
+                }
+                R.id.deleteAllGames -> {
+                    deleteAllGamesComplete(this)
+                    true
+                }
+                else -> false
+            }
+        }
     }
     
     private fun startGame(players: MutableList<Player>, pos: Int, startingPoints: Int){
