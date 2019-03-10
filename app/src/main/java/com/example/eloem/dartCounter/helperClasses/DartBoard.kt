@@ -30,9 +30,10 @@ class DartBoard @JvmOverloads constructor(context: Context,
     var onNextPointListener: (() -> Unit)? = null
     
     init {
-        setImageResource(R.mipmap.dartscheibe)
+        //setImageResource(R.mipmap.dartscheibe)
         scaleType = ScaleType.FIT_XY
         adjustViewBounds = true
+        setImageDrawable(DartboardDrawable())
         isClickable = true
         
         setOnTouchListener{ view, motionEvent ->

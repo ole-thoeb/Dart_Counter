@@ -1,6 +1,6 @@
 package emil.beothy.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 
 abstract class AddListItemsAdapter <T> (var values: MutableList<T>): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     lateinit var mRecyclerView: RecyclerView
