@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:layout_margin="@dimen/standardPadding">
+    android:layout_margin="@dimen/bigPadding">
 
     <TextView
         android:id="@+id/playerName"
@@ -11,10 +11,13 @@
         android:layout_height="wrap_content"
         android:text="Emil"
         android:layout_weight="1"
-        android:textSize="@dimen/standardTextSize"/>
+        android:textSize="@dimen/standardTextSize"
+        android:textColor="@android:color/black"
+        android:layout_marginStart="@dimen/standardPadding"/>
 
     <CheckBox
         android:id="@+id/radioButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.example.eloem.dartCounter.util
+package com.example.eloem.dartCounter.database
 
 object Games {
     const val tableName = "games"

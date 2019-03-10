@@ -2,25 +2,27 @@ package com.example.eloem.dartCounter
 
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import com.example.eloem.dartCounter.helperClasses.HistoryTurn
-import com.example.eloem.dartCounter.helperClasses.Player
-import com.example.eloem.dartCounter.helperClasses.games.DartGame
-import com.example.eloem.dartCounter.util.getOutGame
+import com.example.eloem.dartCounter.games.HistoryTurn
+import com.example.eloem.dartCounter.games.Player
+import com.example.eloem.dartCounter.games.DartGame
+import com.example.eloem.dartCounter.games.Point
+import com.example.eloem.dartCounter.database.getOutGame
 import kotlinx.android.synthetic.main.fragment_overview.*
 import kotlinx.android.synthetic.main.list_item_overview.view.*
 import kotlinx.android.synthetic.main.player_list_item_overview.view.*
+import kotlinx.android.synthetic.main.statistic_card.*
+import kotlinx.android.synthetic.main.statistic_card.view.*
 
 /**
  * A simple [Fragment] subclass.
  * Use the [OverviewFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class OverviewFragment : Fragment() {
+class OverviewFragment : androidx.fragment.app.Fragment() {
     private lateinit var game: DartGame
     
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,13 +43,13 @@ class OverviewFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         
-        val winner = game.winner
+        val winner = game.winners
         
         winnerTV.text = if (winner.size == 1){
             resources.getString(R.string.winMessage, winner[0].name)
         } else {
             resources.getString(R.string.drawMessage,
-                    game.winner.joinToString(separator = " ${resources.getString(R.string.and)} "){
+                    game.winners.joinToString(separator = " ${resources.getString(R.string.and)} "){
                         it.name
                     })
         }
@@ -74,21 +76,24 @@ class OverviewFragment : Fragment() {
            })
         }
         
-        addData(averageLin) { it.averagePoints.toString() }
-        addData(bustedPLin) { it.pointsBusted.toString() }
-        addData(tBustedLin) { it.timesBusted.toString() }
-        addData(missedLin) { it.missedThrows.toString() }
-        addData(mostHitLin) { it.mostHitPoint.toString() }
+        addData(resources.getString(R.string.average)) { it.averagePoints.toString() }
+        addData(resources.getString(R.string.bustedPoints)) { it.pointsBusted.toString() }
+        addData(resources.getString(R.string.timesBusted)) { it.timesBusted.toString() }
+        addData(resources.getString(R.string.missedThrows)) { it.missedThrows.toString() }
+        addData(resources.getString(R.string.mostHit)) { it.mostHitPoint.toString() }
     }
     
-    private fun addData(view: LinearLayout, data: (Player) -> String){
+    private fun addData(title: String, data: (Player) -> String){
+        val card = layoutInflater.inflate(R.layout.statistic_card, listStatistic, false)
+        card.statisticTitle.text = title
         game.players.forEach {
-            view.addView(layoutInflater.inflate(R.layout.list_item_overview, view,
+            card.listStatistic.addView(layoutInflater.inflate(R.layout.list_item_overview, listStatistic,
                     false).apply {
                 playerNameTV.text = it.name
                 dataTV.text = data(it)
             })
         }
+        twoDivLin.addView(card)
     }
     
     companion object {
@@ -118,8 +123,8 @@ val Player.timesBusted: Int
 val Player.pointsBusted: Int
     get() = bustedThrows.sumBy { it.pointsScored }
 
-val Player.mostHitPoint: DartGame.Point?
-    get() = DartGame.Point.instanceById(
+val Player.mostHitPoint: Point?
+    get() = Point.instanceById(
             history.flatMap { it.points.toList() }.toMutableList()
             .apply { removeAll { it.value == 0 } }
             .groupBy { it.id }

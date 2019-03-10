@@ -1,8 +1,7 @@
-package com.example.eloem.dartCounter.helperClasses
+package com.example.eloem.dartCounter.database
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import com.example.eloem.dartCounter.util.*
 import org.jetbrains.anko.db.*
 
 class MyDatabaseOpenHelper(context: Context): ManagedSQLiteOpenHelper(context, "MyDatabase", null, 2) {

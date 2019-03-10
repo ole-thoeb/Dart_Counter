@@ -1,18 +1,16 @@
 package com.example.eloem.dartCounter
 
-import android.support.design.widget.TabLayout
-import android.support.v7.app.AppCompatActivity
+import com.google.android.material.tabs.TabLayout
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.*
-import android.support.v4.view.ViewPager
 import android.util.SparseArray
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import com.example.eloem.dartCounter.helperClasses.games.DartGame
-import com.example.eloem.dartCounter.util.getOutGame
+import com.example.eloem.dartCounter.games.DartGame
+import com.example.eloem.dartCounter.database.getOutGame
 import kotlinx.android.synthetic.main.activity_score_screen.*
 import kotlinx.android.synthetic.main.diagram_spinner.*
 
@@ -56,7 +54,7 @@ class ScoreScreen : AppCompatActivity() {
         container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
         
-        container.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+        container.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener{
             override fun onPageScrollStateChanged(state: Int) {
                 //nothing
             }
@@ -79,8 +77,7 @@ class ScoreScreen : AppCompatActivity() {
                             diagramSpinner?.adapter = ArrayAdapter<String>(this@ScoreScreen,
                                     R.layout.spinner_text_view,
                                     resources.getStringArray(R.array.diagrams)).apply {
-                                    setDropDownViewResource(
-                                            R.layout.support_simple_spinner_dropdown_item)
+                                    setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
                             }
                             diagramSpinner.onItemSelectedListener = object :AdapterView.OnItemSelectedListener{
                                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -127,10 +124,10 @@ class ScoreScreen : AppCompatActivity() {
     private var firstFragment: OverviewFragment? = null
     private var secondFragment: DiagramFragment? = null
     
-    inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-        private val registeredFragments = SparseArray<Fragment>()
+    inner class SectionsPagerAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+        private val registeredFragments = SparseArray<androidx.fragment.app.Fragment>()
         
-        override fun getItem(position: Int): Fragment = when(position){
+        override fun getItem(position: Int): androidx.fragment.app.Fragment = when(position){
             0 -> {
                 firstFragment = OverviewFragment.newInstance(gameId!!)
                 firstFragment!!
@@ -149,7 +146,7 @@ class ScoreScreen : AppCompatActivity() {
         }
     
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val fragment = super.instantiateItem(container, position) as Fragment
+            val fragment = super.instantiateItem(container, position) as androidx.fragment.app.Fragment
             registeredFragments.put(position, fragment)
             return fragment
         }
@@ -159,7 +156,7 @@ class ScoreScreen : AppCompatActivity() {
             super.destroyItem(container, position, `object`)
         }
         
-        fun getFragmentAt(position: Int): Fragment? = registeredFragments[position]
+        fun getFragmentAt(position: Int): androidx.fragment.app.Fragment? = registeredFragments[position]
     }
     
     companion object {

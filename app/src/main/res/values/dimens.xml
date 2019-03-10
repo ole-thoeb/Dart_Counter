@@ -4,6 +4,7 @@
     <dimen name="bigPadding">16dp</dimen>
 
     <dimen name="standardTextSize">18sp</dimen>
+    <dimen name="titleTextSize">24sp</dimen>
 
     <dimen name="strokeWidthBackground">2dp</dimen>
 
