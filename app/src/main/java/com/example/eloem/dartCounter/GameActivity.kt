@@ -1,19 +1,18 @@
 package com.example.eloem.dartCounter
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.database.DataSetObserver
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
-import android.support.v7.app.AlertDialog
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import androidx.appcompat.app.AlertDialog
 import android.view.*
 import android.widget.BaseAdapter
 import android.widget.TextView
-import com.example.eloem.dartCounter.helperClasses.*
-import com.example.eloem.dartCounter.helperClasses.games.DartGame
-import com.example.eloem.dartCounter.helperClasses.games.OutGame
-import com.example.eloem.dartCounter.util.getOutGame
-import com.example.eloem.dartCounter.util.updateNewTurn
+import com.example.eloem.dartCounter.games.*
+import com.example.eloem.dartCounter.database.getOutGame
+import com.example.eloem.dartCounter.database.updateNewTurn
 import kotlinx.android.synthetic.main.activity_game.*
 import kotlinx.android.synthetic.main.all_player_row.view.*
 import kotlinx.android.synthetic.main.game_activity_bottom_sheet.*
@@ -38,7 +37,7 @@ class GameActivity : Activity() {
         throwTextView = arrayOf(throw1TV, throw2TV, throw3TV)
         currentTextView = throwTextView[0]
         setCurrentTextView(currentTextView, 0)
-        throwPoints = Turn(Array(throwTextView.size){ DartGame.Point.instanceByPoints(1, 0) })
+        throwPoints = Turn(Array(throwTextView.size) { Point.instanceByPoints(1, 0) })
         
         list.apply {
             adapter = ListAdapter(listOf())
@@ -64,7 +63,7 @@ class GameActivity : Activity() {
             uiThread {activity ->
                 game = g
             
-                game.setGameWonListener = {
+                game.onGameFinish = {
                     startActivity(Intent(activity, ScoreScreen::class.java)
                             .putExtra(ScoreScreen.GAME_ID_ARG, game.id))
                 }
@@ -150,7 +149,7 @@ class GameActivity : Activity() {
         updateNewTurn(this, game)
         
         //new object so the history doesn't get changed | alternative copy throw points then passed to nextPlayerThrow
-        throwPoints = Turn(Array(throwTextView.size) { DartGame.Point.instanceByPoints(1, 0) }) // reset auf null
+        throwPoints = Turn(Array(throwTextView.size) { Point.instanceByPoints(1, 0) }) // reset auf null
         setThrowTVText()
         setCurrentTextView(throwTextView[0], 0)
         
@@ -174,7 +173,8 @@ class GameActivity : Activity() {
             view.apply {
                 playerTV.text = player.name
                 playerScoreTV.text = player.points.toString()
-                linLayout.setOnClickListener { _ ->
+                linLayout.setOnClickListener {
+                    @SuppressLint("InflateParams")
                     val layout = layoutInflater.inflate(R.layout.turn_overview_list, null)
                     layout.turnList.adapter = HistoryTurnAdapter(player.history)
         
@@ -191,7 +191,7 @@ class GameActivity : Activity() {
     
     private fun updateClosingInfo(){
         doAsync {
-            val closingMoves = game.closingThrows(throwPoints.deepCopy())
+            val closingMoves = game.calculateClosingThrows(throwPoints.deepCopy())
             
             uiThread {
                 val adapter = list.adapter
@@ -225,7 +225,7 @@ class GameActivity : Activity() {
         }
     }
     
-    inner class HistoryTurnAdapter(var data: List<HistoryTurn>): BaseAdapter(){
+    inner class HistoryTurnAdapter(private var data: List<HistoryTurn>): BaseAdapter(){
         override fun getCount() = data.size
     
         override fun getItem(position: Int) = data[position]

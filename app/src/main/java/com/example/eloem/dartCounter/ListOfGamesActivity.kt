@@ -3,14 +3,17 @@ package com.example.eloem.dartCounter
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.NavUtils
-import android.support.v7.widget.CardView
+import androidx.core.app.NavUtils
 import android.view.*
 import android.widget.BaseAdapter
 import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.TextView
-import com.example.eloem.dartCounter.helperClasses.games.DartGame
+import com.example.eloem.dartCounter.database.deleteAllGamesComplete
+import com.example.eloem.dartCounter.database.deleteCompleteGame
+import com.example.eloem.dartCounter.database.getAllGames
+import com.example.eloem.dartCounter.database.insertCompleteGame
+import com.example.eloem.dartCounter.games.DartGame
 import com.example.eloem.dartCounter.util.*
 import emil.beothy.utilFun.deepCopy
 import kotlinx.android.synthetic.main.activity_list_of_games.*
@@ -86,14 +89,14 @@ class ListOfGamesActivity : Activity() {
                 findViewById<TextView>(R.id.status).text = when (game.state ){
                     DartGame.STATE_ON_GOING -> resources.getString(R.string.onGoingGame)
                     DartGame.STATE_DRAW -> resources.getString(R.string.drawMessage,
-                                game.winner.joinToString(separator = " ${resources.getString(R.string.and)} "){
+                                game.winners.joinToString(separator = " ${resources.getString(R.string.and)} "){
                                     it.name
                                 })
-                    DartGame.STATE_WINNER -> resources.getString(R.string.cardWinner, game.winner[0].name)
+                    DartGame.STATE_WINNER -> resources.getString(R.string.cardWinner, game.winners[0].name)
                     
                     else -> resources.getString(R.string.error)
                 }
-                findViewById<CardView>(R.id.card).setOnClickListener {
+                findViewById<androidx.cardview.widget.CardView>(R.id.card).setOnClickListener {
                     if (game.isFinished){
                         val intent = Intent(context, ScoreScreen::class.java)
                         intent.putExtra(ScoreScreen.GAME_ID_ARG, game.id)

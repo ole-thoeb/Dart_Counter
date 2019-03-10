@@ -2,14 +2,14 @@ package com.example.eloem.dartCounter
 
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import com.example.eloem.dartCounter.helperClasses.games.DartGame
+import com.example.eloem.dartCounter.games.DartGame
 import com.example.eloem.dartCounter.util.differentShade
-import com.example.eloem.dartCounter.util.getOutGame
+import com.example.eloem.dartCounter.database.getOutGame
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.select_player_item.view.*
  * create an instance of this fragment.
  *
  */
-class DiagramFragment : Fragment() {
+class DiagramFragment : androidx.fragment.app.Fragment() {
     private lateinit var game: DartGame
     private lateinit var selectedPlayer: BooleanArray
     private var currentDiagram = Diagram.Point

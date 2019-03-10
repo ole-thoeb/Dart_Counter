@@ -1,7 +1,5 @@
-package com.example.eloem.dartCounter.helperClasses.games
+package com.example.eloem.dartCounter.games
 
-import com.example.eloem.dartCounter.helperClasses.Player
-import emil.beothy.utilFun.deepCopy
 import java.util.*
 
 class SingleOutGame(id: Int, players: Array<Player>, pPos: Int = 0, date: Date = Calendar.getInstance().time):

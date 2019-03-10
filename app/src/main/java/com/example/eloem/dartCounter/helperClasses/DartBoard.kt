@@ -1,34 +1,33 @@
 package com.example.eloem.dartCounter.helperClasses
 
 import android.content.Context
-import android.support.v4.widget.NestedScrollView
+import androidx.core.widget.NestedScrollView
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ViewTreeObserver
 import android.widget.ImageView
 import com.example.eloem.dartCounter.R
-import com.example.eloem.dartCounter.helperClasses.games.DartGame
+import com.example.eloem.dartCounter.games.Point
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
-class DartBoard: ImageView{
+class DartBoard @JvmOverloads constructor(context: Context,
+                                          attrs: AttributeSet? = null,
+                                          defStyleAttr: Int = 0,
+                                          defStyleRes: Int = 0):
+        ImageView(context, attrs, defStyleAttr, defStyleRes){
     
     private var needToUpdateMappingPoints = true
     private lateinit var mappingPoints: MutableList<BetterPoint>
     //starts at 3 and goes around counterclockwise
-    private val mappingList = arrayOf(3, 17, 2, 15, 10, 6, 13, 4, 18, 1, 20, 5, 12, 9, 14, 11, 8, 16, 7, 19)
+    private val mappingList = listOf(3, 17, 2, 15, 10, 6, 13, 4, 18, 1, 20, 5, 12, 9, 14, 11, 8, 16, 7, 19)
     
     private var lastTouch = System.currentTimeMillis()
-    private var lastPoint = DartGame.Point.instanceByPoints(1, 0)
+    private var lastPoint = Point.instanceByPoints(1, 0)
     private var switchesToStop = 0
     
-    var onPointListener: (DartGame.Point) -> Unit = {_ -> Unit}
-    var onNextPointListener: () -> Unit = {}
-    
-    constructor(context: Context): super(context)
-    constructor(context: Context, attributeSet: AttributeSet): super(context, attributeSet)
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs, defStyleAttr)
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int): super(context, attrs, defStyleAttr, defStyleRes)
+    var onPointListener: ((Point) -> Unit)? = null
+    var onNextPointListener: (() -> Unit)? = null
     
     init {
         setImageResource(R.mipmap.dartscheibe)
@@ -63,12 +62,12 @@ class DartBoard: ImageView{
                 }
             
                 when {
-                    (dist < radFirstCircle) -> setThrowPoints(DartGame.Point.instanceByPoints(2, 25), false)
-                    (dist < radSecondCircle) -> setThrowPoints(DartGame.Point.instanceByPoints(1, 25), false)
-                    (dist > radBoard) -> setThrowPoints(DartGame.Point.instanceByPoints(1, 0), false)
+                    (dist < radFirstCircle) -> setThrowPoints(Point.instanceByPoints(2, 25), false)
+                    (dist < radSecondCircle) -> setThrowPoints(Point.instanceByPoints(1, 25), false)
+                    (dist > radBoard) -> setThrowPoints(Point.instanceByPoints(1, 0), false)
                     else -> {
                         val shortestPoint = findNearest(mappingPoints, touchPoint)
-                        setThrowPoints(DartGame.Point.instanceByPoints(1, mappingList[shortestPoint]), true)
+                        setThrowPoints(Point.instanceByPoints(1, mappingList[shortestPoint]), true)
                     }
                 }
             }
@@ -127,7 +126,7 @@ class DartBoard: ImageView{
         return shortestPos
     }
     
-    private fun setThrowPoints(mPoints: DartGame.Point, multiple: Boolean) {
+    private fun setThrowPoints(mPoints: Point, multiple: Boolean) {
         val currentMillis = System.currentTimeMillis()
         val timespan = 300L
         
@@ -145,9 +144,9 @@ class DartBoard: ImageView{
             mPoints.multiplicator
         }
         
-        val finalPoint = DartGame.Point.instanceByPoints(multiplicator, mPoints.point)
+        val finalPoint = Point.instanceByPoints(multiplicator, mPoints.point)
         
-        onPointListener(finalPoint)
+        onPointListener?.invoke(finalPoint)
         
         lastPoint = finalPoint.copy()
         
@@ -156,7 +155,7 @@ class DartBoard: ImageView{
             
             uiThread {
                 if (switchesToStop > 0) switchesToStop --
-                else onNextPointListener()
+                else onNextPointListener?.invoke()
             }
         }
         

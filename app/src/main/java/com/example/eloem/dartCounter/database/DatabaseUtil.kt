@@ -1,9 +1,8 @@
-package com.example.eloem.dartCounter.util
+package com.example.eloem.dartCounter.database
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import com.example.eloem.dartCounter.helperClasses.*
-import com.example.eloem.dartCounter.helperClasses.games.*
+import com.example.eloem.dartCounter.games.*
 import org.jetbrains.anko.db.*
 import java.sql.SQLException
 import java.util.*
@@ -93,12 +92,9 @@ fun getAllGames(context: Context) = context.database.use {
 }
 
 fun getPlayerFromOneGame(context: Context, gameId: Int) = context.database.use {
-    val players = mutableListOf<Player>()
     
     val playerParser = rowParser {id: Int, name: String, points: Int ->
-        val player = Player(id, name, points, getPlayerHistory(context, id))
-        
-        players.add(player)
+        val player = Player(id, name, points, getPlayerHistory(context, id).toMutableList())
         
         player
     }
@@ -110,22 +106,17 @@ fun getPlayerFromOneGame(context: Context, gameId: Int) = context.database.use {
             .whereArgs("${Players.columnGameID} = {id}", "id" to gameId)
             .orderBy(Players.columnPosition)
             .parseList(playerParser)
-    
-    players.toTypedArray()
+            .toTypedArray()
 }
 
 fun getPlayerHistory(context: Context, playerId: Int) = context.database.use {
-    val history = mutableListOf<HistoryTurn>()
     
     val historyParser = rowParser {p1: Int, p2: Int, p3: Int, pLeft: Int, pBefore: Int ->
-        val arg = HistoryTurn(arrayOf(DartGame.Point.instanceById(p1),
-                DartGame.Point.instanceById(p2),
-                DartGame.Point.instanceById(p3)),
+        val arg = HistoryTurn(arrayOf(Point.instanceById(p1),
+                Point.instanceById(p2),
+                Point.instanceById(p3)),
                 pLeft,
                 pBefore)
-        
-        history.add(arg)
-        
         arg
     }
     
@@ -138,8 +129,6 @@ fun getPlayerHistory(context: Context, playerId: Int) = context.database.use {
             .whereArgs("${Turns.columnPlayerID} = {id}", "id" to playerId)
             .orderBy(Turns.columnPosition)
             .parseList(historyParser)
-    
-    history
 }
 
 fun insertCompleteGame(context: Context, game: DartGame){

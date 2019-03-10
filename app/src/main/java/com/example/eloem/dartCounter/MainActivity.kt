@@ -4,15 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import com.example.eloem.dartCounter.helperClasses.games.DoubleOutGame
-import com.example.eloem.dartCounter.helperClasses.games.MasterOutGame
-import com.example.eloem.dartCounter.helperClasses.games.SingleOutGame
-import com.example.eloem.dartCounter.helperClasses.Player
+import com.example.eloem.dartCounter.database.deleteAllGamesComplete
+import com.example.eloem.dartCounter.database.insertCompleteGame
+import com.example.eloem.dartCounter.games.DoubleOutGame
+import com.example.eloem.dartCounter.games.MasterOutGame
+import com.example.eloem.dartCounter.games.SingleOutGame
+import com.example.eloem.dartCounter.games.Player
 import com.example.eloem.dartCounter.util.*
 import emil.beothy.adapter.AddListItemsAdapter
 import emil.beothy.widget.BetterEditText
@@ -48,7 +48,7 @@ class MainActivity : Activity() {
             } else mutableListOf()
         
         val viewAdapter = MyListAdapter(this, player)
-        val viewManager = LinearLayoutManager(this)
+        val viewManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         playerList.apply {
             adapter = viewAdapter
             layoutManager = viewManager
@@ -125,16 +125,16 @@ class MainActivity : Activity() {
     
     class MyListAdapter(private val context: Context, values: MutableList<Player>): AddListItemsAdapter<Player>(values){
         
-        class ViewHolder1(layout: View): RecyclerView.ViewHolder(layout){
+        class ViewHolder1(layout: View): androidx.recyclerview.widget.RecyclerView.ViewHolder(layout){
             val playerName: BetterEditText = layout.findViewById(R.id.playerName)
             val deleteButton: ImageButton = layout.findViewById(R.id.deleteButton)
         }
         
-        class ViewHolder2(layout: View): RecyclerView.ViewHolder(layout){
+        class ViewHolder2(layout: View): androidx.recyclerview.widget.RecyclerView.ViewHolder(layout){
             val linLayout: LinearLayout = layout.findViewById(R.id.linLayout)
         }
     
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
             when (holder.itemViewType){
                 0 ->{
                     val realHolder = holder as ViewHolder1
@@ -193,7 +193,7 @@ class MainActivity : Activity() {
             }
         }
     
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
             return when(viewType){
                 0 ->{
                     val layout = LayoutInflater.from(parent.context).inflate(R.layout.player_list_row, parent,false)
