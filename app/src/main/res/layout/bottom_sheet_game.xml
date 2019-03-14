@@ -10,7 +10,7 @@
     app:behavior_peekHeight="@dimen/bottomSheetHeight"
     app:layout_behavior="@string/bottom_sheet_behavior"
     android:background="@android:color/white"
-    android:elevation="6dp"
+    android:elevation="0dp"
     android:clickable="true"
     android:focusable="true">
 

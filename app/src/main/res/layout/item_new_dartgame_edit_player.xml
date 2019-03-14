@@ -7,26 +7,24 @@
     android:paddingHorizontal="@dimen/bigPadding"
     android:paddingVertical="@dimen/standardPadding">
 
-    <emil.beothy.widget.BetterEditText
+    <com.example.eloem.dartCounter.helperClasses.BetterEditText
         android:id="@+id/playerName"
-        style="@style/OneLineTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:maxLength="20"
-        android:inputType="textCapSentences"
+        android:inputType="textCapSentences|textMultiLine"
         android:background="@android:color/transparent"
         android:textSize="@dimen/standardTextSize"
-        android:hint="@string/newPlayer"
-        android:imeOptions="flagNoExtractUi|actionGo" />
+        android:textColor="?attr/colorOnBackground"
+        android:hint="@string/newPlayer" />
 
     <ImageButton
         android:id="@+id/deleteButton"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
+        android:background="@drawable/round_button_background"
         android:padding="@dimen/standardPadding"
-        app:srcCompat="@drawable/ic_clear"/>
-
+        android:src="@drawable/ic_clear" />
 
 </LinearLayout>

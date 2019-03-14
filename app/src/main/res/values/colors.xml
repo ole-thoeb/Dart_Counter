@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#cc0000</color>
+    <color name="colorPrimaryDark">#930000</color>
+    <color name="colorPrimaryLight">#ff4f30</color>
+
+    <color name="colorSecondary">#fdd835</color>
+    <color name="colorSecondaryDark">#FFBE00</color>
+    <color name="colorSecondaryLight">#ffff6b</color>
+
     <color name="colorAccent">#ff4081</color>
+    
+    <color name="colorDartBoard1">#009309</color>
 
     <color name="red">#ba1414</color>
     <color name="pink">#EB1460</color>
@@ -25,6 +33,7 @@
     <color name="blue_grey">#5E7C8B</color>
     <color name="black">#000000</color>
     <color name="withe_grey">#FFFAFAFA</color>
+    <color name="withe">#FFFFFF</color>
 
     <array name="lineColor">
         <item>@color/red</item>

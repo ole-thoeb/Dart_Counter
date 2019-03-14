@@ -1,140 +1,179 @@
 package com.example.eloem.dartCounter
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.app.NavUtils
-import android.view.*
-import android.widget.BaseAdapter
+import android.text.format.DateFormat
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.eloem.dartCounter.database.deleteAllGamesComplete
 import com.example.eloem.dartCounter.database.deleteCompleteGame
 import com.example.eloem.dartCounter.database.getAllGames
 import com.example.eloem.dartCounter.database.insertCompleteGame
 import com.example.eloem.dartCounter.games.DartGame
-import com.example.eloem.dartCounter.util.*
+import com.example.eloem.dartCounter.recyclerview.ContextAdapter
+import com.example.eloem.dartCounter.recyclerview.GridSpacingItemDecoration
+import com.example.eloem.dartCounter.recyclerview.PaddingAdapter
+import com.example.eloem.dartCounter.util.dp
+import com.example.eloem.dartCounter.util.newGameID
+import com.example.eloem.dartCounter.util.newPlayerID
+import com.google.android.material.card.MaterialCardView
 import emil.beothy.utilFun.deepCopy
 import kotlinx.android.synthetic.main.activity_list_of_games.*
 import java.util.*
 
-class ListOfGamesActivity : Activity() {
-    lateinit var games: MutableList<DartGame>
+
+class ListOfGamesActivity : AppCompatActivity() {
+    private lateinit var recyclerViewAdapter: MyListAdapter
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_of_games)
+        setSupportActionBar(toolbar)
         
-        with(toolbar){
-            setNavigationIcon(R.drawable.ic_arrow_back)
-            setNavigationOnClickListener {
-                NavUtils.navigateUpFromSameTask(this@ListOfGamesActivity)
-            }
-            inflateMenu(R.menu.activity_list_of_games_menu)
-            setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.deleteAllGames -> {
-                        deleteAllGamesComplete(this@ListOfGamesActivity)
-                        refreshList()
-                        true
-                    }
-                    R.id.deleteAllFinishedGames -> {
-                        for (game in games) {
-                            if (game.isFinished) deleteCompleteGame(this@ListOfGamesActivity, game)
-                            refreshList()
-                        }
-                        true
-                    }
-                    R.id.deleteAllRunningGames -> {
-                        for (game in games) {
-                            if (!game.isFinished) deleteCompleteGame(this@ListOfGamesActivity, game)
-                            refreshList()
-                        }
-                        true
-                    }
-                    else -> false
+        //real data is set in onResume
+        recyclerViewAdapter = MyListAdapter(mutableListOf())
+        list.apply {
+            layoutManager = GridLayoutManager(this@ListOfGamesActivity, 2)
+            addItemDecoration(
+                    GridSpacingItemDecoration(2,
+                            resources.getDimensionPixelSize(R.dimen.cardGridSpacing),
+                            true)
+            )
+            adapter = PaddingAdapter(recyclerViewAdapter, 10.dp)
+            emptyView = empty
+        }
+        
+        newGameFAB.setOnClickListener {
+            startActivity(Intent(this, NewDartGameActivity::class.java))
+        }
+    }
+    
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.activity_list_of_games_menu, menu)
+        return true
+    }
+    
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean = when(item?.itemId){
+        R.id.deleteAllGames -> {
+            deleteAllGamesComplete(this)
+            recyclerViewAdapter.data = mutableListOf()
+            recyclerViewAdapter.notifyDataSetChanged()
+            true
+        }
+        R.id.deleteAllFinishedGames -> {
+            recyclerViewAdapter.data.forEachIndexed { index, dartGame ->
+                if (dartGame.isFinished) {
+                    recyclerViewAdapter.data.remove(dartGame)
+                    deleteCompleteGame(this, dartGame)
+                    recyclerViewAdapter.notifyItemRemoved(index)
                 }
             }
+            true
         }
+        R.id.deleteAllRunningGames -> {
+            recyclerViewAdapter.data.forEachIndexed { index, dartGame ->
+                if (!dartGame.isFinished) {
+                    recyclerViewAdapter.data.remove(dartGame)
+                    deleteCompleteGame(this, dartGame)
+                    recyclerViewAdapter.notifyItemRemoved(index)
+                }
+            }
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
     
     override fun onResume() {
         super.onResume()
-        
-        refreshList()
+        recyclerViewAdapter.data = getAllGames(this)
+        recyclerViewAdapter.notifyDataSetChanged()
     }
     
-    private fun refreshList(){
-        games = getAllGames(this)
-        list.adapter = MyListAdapter(games)
-    }
-    
-    inner class MyListAdapter(var data: MutableList<DartGame>): BaseAdapter(){
+    class MyListAdapter(var data: MutableList<DartGame>): ContextAdapter<MyListAdapter.GameViewHolder>(){
         
-        override fun getCount(): Int = data.size
+        class GameViewHolder(layout: View): RecyclerView.ViewHolder(layout) {
+            val card: MaterialCardView = layout.findViewById(R.id.card)
+            val players: TextView = layout.findViewById(R.id.players)
+            val status: TextView = layout.findViewById(R.id.status)
+            val date: TextView = layout.findViewById(R.id.date)
+            val optionButton: ImageButton = layout.findViewById(R.id.menuButton)
+        }
+        
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
+            return GameViewHolder(inflate(R.layout.card_list_of_games, parent))
+        }
     
-        override fun getItem(position: Int): DartGame = data[position]
+        override fun getItemCount(): Int = data.size
     
-        override fun getItemId(position: Int): Long = position.toLong()
+        override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
+            val game = data[position]
     
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val game = getItem(position)
+            with(holder){
+                players.text = context.getString(R.string.cardPlayers, game.players.size)
+                date.text = DateFormat.getDateFormat(context).format(game.date)
+                status.text = when (game.state){
+                    DartGame.STATE_ON_GOING -> context.getString(R.string.onGoingGame)
+                    DartGame.STATE_DRAW -> context.getString(R.string.drawMessage,
+                            game.winners.joinToString(separator = " ${context.getString(R.string.and)} "){
+                                it.name
+                            })
+                    DartGame.STATE_WINNER -> context.getString(R.string.cardWinner, game.winners[0].name)
             
-            val viewHolder = convertView?: layoutInflater.inflate(R.layout.game_card_list_item, parent, false)
-            
-            with(viewHolder){
-                findViewById<TextView>(R.id.players).text = resources.getString(R.string.cardPlayers, game.players.size)
-                findViewById<TextView>(R.id.date).text = android.text.format.DateFormat.getDateFormat(context).format(game.date)
-                findViewById<TextView>(R.id.status).text = when (game.state ){
-                    DartGame.STATE_ON_GOING -> resources.getString(R.string.onGoingGame)
-                    DartGame.STATE_DRAW -> resources.getString(R.string.drawMessage,
-                                game.winners.joinToString(separator = " ${resources.getString(R.string.and)} "){
-                                    it.name
-                                })
-                    DartGame.STATE_WINNER -> resources.getString(R.string.cardWinner, game.winners[0].name)
-                    
-                    else -> resources.getString(R.string.error)
+                    else -> context.getString(R.string.error)
                 }
-                findViewById<androidx.cardview.widget.CardView>(R.id.card).setOnClickListener {
+                card.setOnClickListener {
                     if (game.isFinished){
-                        val intent = Intent(context, ScoreScreen::class.java)
-                        intent.putExtra(ScoreScreen.GAME_ID_ARG, game.id)
-                        startActivity(intent)
+                        startActivity(context,
+                                Intent(context, ScoreScreen::class.java).putExtra(ScoreScreen.GAME_ID_ARG, game.id),
+                                null
+                        )
                     }else {
-                        val i = Intent(context, GameActivity::class.java)
-                        i.putExtra(GameActivity.DART_GAME_EXTRA, game.id)
-                        startActivity(i)
+                        startActivity(context,
+                                Intent(context, GameActivity::class.java).putExtra(GameActivity.DART_GAME_EXTRA, game.id),
+                                null
+                        )
                     }
                 }
-                findViewById<ImageButton>(R.id.menuButton).setOnClickListener { button ->
+                optionButton.setOnClickListener { button ->
                     val popupMenu = PopupMenu(context, button)
                     with(popupMenu) {
                         menuInflater.inflate(R.menu.list_of_games_context_menu, popupMenu.menu)
-                        
+                
                         setOnMenuItemClickListener { menuItem ->
                             when (menuItem.itemId) {
                                 R.id.delete -> {
-                                    deleteCompleteGame(context, data[position])
-                
-                                    data.removeAt(position)
-                                    notifyDataSetChanged()
+                                    val pos = holder.adapterPosition
+                                    deleteCompleteGame(context, data[pos])
+                            
+                                    data.removeAt(pos)
+                                    notifyItemRemoved(pos)
                                     true
                                 }
-                                R.id.revenge ->{
-                                    val newGame = data[position].copy(
-                                            pId = newGameID(this@ListOfGamesActivity),
-                                            pPlayers = data[position].players.deepCopy {
-                                                it.deepCopy(pId = newPlayerID(this@ListOfGamesActivity),
+                                R.id.revenge -> {
+                                    val pos = holder.adapterPosition
+                                    val newGame = data[pos].copy(
+                                            pId = newGameID(context),
+                                            pPlayers = data[pos].players.deepCopy {
+                                                it.deepCopy(pId = newPlayerID(context),
                                                         pPoints = it.startingPoints)
                                             },
                                             pDate = Calendar.getInstance().time)
-                                    insertCompleteGame(this@ListOfGamesActivity, newGame)
-                                    
-                                    startActivity(Intent(this@ListOfGamesActivity,
-                                            GameActivity::class.java).apply {
-                                        putExtra(GameActivity.DART_GAME_EXTRA, newGame.id)
-                                    })
+                                    insertCompleteGame(context, newGame)
+                            
+                                    startActivity(context,
+                                            Intent(context, GameActivity::class.java)
+                                                    .putExtra(GameActivity.DART_GAME_EXTRA, newGame.id),
+                                            null
+                                    )
                                     true
                                 }
                                 else -> false
@@ -144,7 +183,8 @@ class ListOfGamesActivity : Activity() {
                     }
                 }
             }
-            return viewHolder
         }
+    
+        override fun getItemId(position: Int): Long = position.toLong()
     }
 }

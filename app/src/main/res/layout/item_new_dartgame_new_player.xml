@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:text="@string/player"
         android:textSize="@dimen/standardTextSize"
+        android:textColor="@android:color/tertiary_text_light"
         android:paddingStart="@dimen/bigPadding"/>
 
 </LinearLayout>

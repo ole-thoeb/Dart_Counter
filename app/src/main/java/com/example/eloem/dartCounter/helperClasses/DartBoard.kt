@@ -8,6 +8,7 @@ import android.view.ViewTreeObserver
 import android.widget.ImageView
 import com.example.eloem.dartCounter.R
 import com.example.eloem.dartCounter.games.Point
+import com.example.eloem.dartCounter.util.getAttribute
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
@@ -22,9 +23,8 @@ class DartBoard @JvmOverloads constructor(context: Context,
     //starts at 3 and goes around counterclockwise
     private val mappingList = listOf(3, 17, 2, 15, 10, 6, 13, 4, 18, 1, 20, 5, 12, 9, 14, 11, 8, 16, 7, 19)
     
-    private var lastTouch = System.currentTimeMillis()
-    private var lastPoint = Point.instanceByPoints(1, 0)
-    private var switchesToStop = 0
+    private val backgroundDrawable = DartboardDrawable(context.getAttribute(R.attr.colorSecondary).data,
+            context.getAttribute(R.attr.colorPrimary).data)
     
     var onPointListener: ((Point) -> Unit)? = null
     var onNextPointListener: (() -> Unit)? = null
@@ -33,27 +33,24 @@ class DartBoard @JvmOverloads constructor(context: Context,
         //setImageResource(R.mipmap.dartscheibe)
         scaleType = ScaleType.FIT_XY
         adjustViewBounds = true
-        setImageDrawable(DartboardDrawable())
+        setImageDrawable(backgroundDrawable)
         isClickable = true
         
         setOnTouchListener{ view, motionEvent ->
             if (motionEvent.action == MotionEvent.ACTION_UP) {
-                val firstCirclePercent = 0.19157
-                val secondCirclePercent = 0.370096
+                val circlePercent = 0.33
             
                 val touchPoint = BetterPoint(motionEvent.x.toDouble(), motionEvent.y.toDouble())
             
                 val width = view.width
                 val height = view.height
             
-                val radBoard: Int
-                radBoard = if (width < height) width / 2
+                val radBoard = if (width < height) width / 2
                 else height / 2
             
                 val center = BetterPoint((width / 2).toDouble(), (height / 2).toDouble())
             
-                val radFirstCircle = radBoard * firstCirclePercent
-                val radSecondCircle = radBoard * secondCirclePercent
+                val radCircle = radBoard * circlePercent
             
                 val dist = touchPoint.distance(center)
             
@@ -63,12 +60,11 @@ class DartBoard @JvmOverloads constructor(context: Context,
                 }
             
                 when {
-                    (dist < radFirstCircle) -> setThrowPoints(Point.instanceByPoints(2, 25), false)
-                    (dist < radSecondCircle) -> setThrowPoints(Point.instanceByPoints(1, 25), false)
-                    (dist > radBoard) -> setThrowPoints(Point.instanceByPoints(1, 0), false)
+                    (dist < radCircle) -> setThrowPoints(Point.instanceByPoints(1, 25), 2)
+                    (dist > radBoard) -> setThrowPoints(Point.instanceByPoints(1, 0), 1)
                     else -> {
                         val shortestPoint = findNearest(mappingPoints, touchPoint)
-                        setThrowPoints(Point.instanceByPoints(1, mappingList[shortestPoint]), true)
+                        setThrowPoints(Point.instanceByPoints(1, mappingList[shortestPoint]), 3)
                     }
                 }
             }
@@ -127,36 +123,48 @@ class DartBoard @JvmOverloads constructor(context: Context,
         return shortestPos
     }
     
-    private fun setThrowPoints(mPoints: Point, multiple: Boolean) {
+    private var lastTouch = System.currentTimeMillis()
+    private var lastPoint = Point.instanceByPoints(1, 0)
+    private var pressesToWait = 0
+    
+    private fun setThrowPoints(point: Point, limit: Int) {
         val currentMillis = System.currentTimeMillis()
         val timespan = 300L
         
         val multiplicator = if (lastTouch > currentMillis - timespan
-                && lastPoint.point == mPoints.point
-                && multiple
-                && lastPoint.multiplicator < 3) {
-            switchesToStop++
+                && lastPoint.point == point.point
+                && lastPoint.multiplicator < limit) {
+            pressesToWait++
             
             lastPoint.multiplicator + 1
         } else {
             
-            if (lastTouch > currentMillis - timespan) switchesToStop ++
+            if (lastTouch > currentMillis - timespan){
+                pressesToWait ++
+                //still have to reset the last sector that was pressed
+                backgroundDrawable.setState(lastPoint.point, DartboardDrawable.STATE_NOT_PRESSED)
+            }
             
-            mPoints.multiplicator
+            point.multiplicator
         }
         
-        val finalPoint = Point.instanceByPoints(multiplicator, mPoints.point)
+        val finalPoint = Point.instanceByPoints(multiplicator, point.point)
         
+        backgroundDrawable.setState(finalPoint.point, finalPoint.multiplicator)
         onPointListener?.invoke(finalPoint)
         
         lastPoint = finalPoint.copy()
         
         doAsync {
-            if (multiple) Thread.sleep(timespan)
+            if (limit > 1) Thread.sleep(timespan)
             
             uiThread {
-                if (switchesToStop > 0) switchesToStop --
-                else onNextPointListener?.invoke()
+                if (pressesToWait > 0) {
+                    pressesToWait --
+                } else {
+                    backgroundDrawable.setState(finalPoint.point, DartboardDrawable.STATE_NOT_PRESSED)
+                    onNextPointListener?.invoke()
+                }
             }
         }
         

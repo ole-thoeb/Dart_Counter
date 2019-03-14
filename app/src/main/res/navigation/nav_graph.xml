@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/listOfGamesActivity">
+
+    <activity
+        android:id="@+id/listOfGamesActivity"
+        android:name="com.example.eloem.dartCounter.ListOfGamesActivity"
+        android:label="ListOfGamesActivity" />
+    <activity
+        android:id="@+id/newDartGameActivity"
+        android:name="com.example.eloem.dartCounter.NewDartGameActivity"
+        android:label="NewDartGameActivity" />
+    <activity
+        android:id="@+id/gameActivity"
+        android:name="com.example.eloem.dartCounter.GameActivity"
+        android:label="activity_game"
+        tools:layout="@layout/activity_game" />
+</navigation>

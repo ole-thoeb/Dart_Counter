@@ -8,143 +8,144 @@
     tools:context=".GameActivity"
     android:clipToPadding="false">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:fillViewport="true">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appbar"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_weight="1"
-                android:background="?attr/colorPrimary"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:titleTextAppearance="@style/MyTitleTextStyle">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/throw1mtrButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/bigPadding"
+                android:layout_marginEnd="@dimen/bigPadding"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/inactive_background"
+                android:onClick="onClick"
+                android:textAlignment="center"
+                android:textSize="@dimen/standardTextSize"
+                app:layout_constraintEnd_toStartOf="@+id/throw2mtrButton"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:strokeColor="@color/stroke_throw_selector" />
 
-                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/standardPadding"
-                    android:paddingEnd="@dimen/bigPadding">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/throw2mtrButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="@dimen/bigPadding"
+                android:layout_marginEnd="@dimen/bigPadding"
+                android:onClick="onClick"
+                android:textAlignment="center"
+                android:textSize="@dimen/standardTextSize"
+                app:layout_constraintEnd_toStartOf="@+id/throw3mtrButton"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/throw1mtrButton"
+                app:layout_constraintTop_toTopOf="parent"
+                app:strokeColor="@color/stroke_throw_selector" />
 
-                    <TextView
-                        android:id="@+id/currentPlayer"
-                        style="@style/OneLineTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Emil"
-                        android:textSize="@dimen/standardTextSize" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/throw3mtrButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="@dimen/bigPadding"
+                android:layout_marginEnd="@dimen/bigPadding"
+                android:onClick="onClick"
+                android:textAlignment="center"
+                android:textSize="@dimen/standardTextSize"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/throw2mtrButton"
+                app:layout_constraintTop_toTopOf="parent"
+                app:strokeColor="@color/stroke_throw_selector" />
 
-                    <TextView
-                        android:id="@+id/currentPlayerScore"
-                        style="@style/OneLineTextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="260"
-                        android:textAlignment="textEnd"
-                        android:textSize="@dimen/standardTextSize" />
-
-                </LinearLayout>
-
-            </androidx.appcompat.widget.Toolbar>
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/scrollView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
+            <com.example.eloem.dartCounter.helperClasses.DartBoard
+                android:id="@+id/board"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/throw2mtrButton" />
 
             <LinearLayout
+                android:id="@+id/allPlayerList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/standardPadding">
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/board" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/standardPadding"
-                    android:weightSum="3">
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/allPlayerList" />
 
-                    <TextView
-                        android:id="@+id/throw1TV"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/bigPadding"
-                        android:layout_weight="1"
-                        android:background="@drawable/inactive_background"
-                        android:onClick="onClick"
-                        android:paddingVertical="@dimen/standardPadding"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/standardTextSize" />
-
-                    <TextView
-                        android:id="@+id/throw2TV"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/bigPadding"
-                        android:layout_weight="1"
-                        android:background="@drawable/inactive_background"
-                        android:onClick="onClick"
-                        android:paddingVertical="@dimen/standardPadding"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/standardTextSize" />
-
-                    <TextView
-                        android:id="@+id/throw3TV"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/bigPadding"
-                        android:layout_weight="1"
-                        android:background="@drawable/inactive_background"
-                        android:onClick="onClick"
-                        android:paddingVertical="@dimen/standardPadding"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/standardTextSize" />
-
-                </LinearLayout>
-
-                <com.example.eloem.dartCounter.helperClasses.DartBoard
-                    android:id="@+id/board"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <LinearLayout
-                    android:id="@+id/allPlayerList"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-
-                <!-- spacer, damit der untere teil nicht unter dem bottom sheet verschwindet -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="68dp"/>
-
-            </LinearLayout>
-
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    </LinearLayout>
+    <!--<include layout="@layout/bottom_sheet_game" />-->
 
-    <include layout="@layout/game_activity_bottom_sheet"/>
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_weight="1"
+        android:background="?attr/colorPrimary"
+        android:layout_gravity="bottom"
+        android:focusable="false"
+        android:clickable="false"
+        app:contentInsetStart="16dp"
+        app:contentInsetEnd="16dp">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/currentPlayer"
+                style="@style/OneLineTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Emil"
+                android:textAppearance="?attr/textAppearanceBody1"/>
+
+            <TextView
+                android:id="@+id/currentPlayerScore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="260"
+                android:textAlignment="textEnd"
+                android:textAppearance="?attr/textAppearanceBody1" />
+
+        </LinearLayout>
+
+    </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/confirmThrowFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_check_white"
+        android:tint="?attr/colorOnSecondary"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@id/bottomSheet"
-        app:layout_anchorGravity="end|top"/>
+        app:layout_anchor="@id/toolbar"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

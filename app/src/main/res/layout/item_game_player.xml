@@ -12,7 +12,7 @@
         style="@style/OneLineTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/standardTextSize" />
+        android:textAppearance="?attr/textAppearanceBody1"/>
 
     <TextView
         android:id="@+id/playerScoreTV"
@@ -20,6 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="textEnd"
-        android:textSize="@dimen/standardTextSize"/>
+        android:textAppearance="?attr/textAppearanceBody1"/>
 
 </LinearLayout>

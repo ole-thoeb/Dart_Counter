@@ -1,29 +1,27 @@
 package com.example.eloem.dartCounter
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
-import android.database.DataSetObserver
 import android.os.Bundle
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import androidx.appcompat.app.AlertDialog
 import android.view.*
 import android.widget.BaseAdapter
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.example.eloem.dartCounter.games.*
 import com.example.eloem.dartCounter.database.getOutGame
 import com.example.eloem.dartCounter.database.updateNewTurn
+import com.google.android.material.button.MaterialButton
 import kotlinx.android.synthetic.main.activity_game.*
-import kotlinx.android.synthetic.main.all_player_row.view.*
-import kotlinx.android.synthetic.main.game_activity_bottom_sheet.*
+import kotlinx.android.synthetic.main.item_game_player.view.*
 import kotlinx.android.synthetic.main.turn_overview_list.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
-class GameActivity : Activity() {
+class GameActivity : AppCompatActivity() {
     //für textViews die die Punkte anteigen
-    private lateinit var throwTextView: Array<TextView>
-    private lateinit var currentTextView: TextView
+    private lateinit var throwTextView: Array<MaterialButton>
+    private lateinit var currentTextView: MaterialButton
     private var currentTextViewPos = 0
     
     private lateinit var throwPoints: Turn
@@ -33,13 +31,14 @@ class GameActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
+        setSupportActionBar(toolbar)
         
-        throwTextView = arrayOf(throw1TV, throw2TV, throw3TV)
+        throwTextView = arrayOf(throw1mtrButton, throw2mtrButton, throw3mtrButton)
         currentTextView = throwTextView[0]
-        setCurrentTextView(currentTextView, 0)
+        setCurrentButton(currentTextView, 0)
         throwPoints = Turn(Array(throwTextView.size) { Point.instanceByPoints(1, 0) })
         
-        list.apply {
+        /*list.apply {
             adapter = ListAdapter(listOf())
             adapter.registerDataSetObserver(object : DataSetObserver(){
                 override fun onChanged() {
@@ -56,7 +55,7 @@ class GameActivity : Activity() {
                     }
                 }
             })
-        }
+        }*/
     
         doAsync {
             val g = getOutGame(applicationContext, intent.getIntExtra(DART_GAME_EXTRA, 0))
@@ -104,24 +103,26 @@ class GameActivity : Activity() {
     }*/
     
     fun onClick(view: View) {
-        if (view is TextView) {
+        if (view is MaterialButton) {
             when (view.id) {
-                R.id.throw1TV -> setCurrentTextView(view, 0)
-                R.id.throw2TV -> setCurrentTextView(view, 1)
-                R.id.throw3TV -> setCurrentTextView(view, 2)
+                R.id.throw1mtrButton -> setCurrentButton(view, 0)
+                R.id.throw2mtrButton -> setCurrentButton(view, 1)
+                R.id.throw3mtrButton -> setCurrentButton(view, 2)
             }
         }
     }
     
-    private fun setCurrentTextView(tv: TextView, pos: Int) {
-        fun setActive(tv: TextView, pos: Int) {
-            currentTextView = tv
+    private fun setCurrentButton(tv: MaterialButton, pos: Int) {
+        fun setActive(mtrButton: MaterialButton, pos: Int) {
+            currentTextView = mtrButton
             currentTextViewPos = pos
-            tv.background = resources.getDrawable(R.drawable.active_background, theme)
+            mtrButton.isActivated = true
+            //tv.background = resources.getDrawable(R.drawable.active_background, theme)
         }
         
-        fun setInactive(tv: TextView) {
-            tv.background = resources.getDrawable(R.drawable.inactive_background, theme)
+        fun setInactive(mtrButton: MaterialButton) {
+            //tv.background = resources.getDrawable(R.drawable.inactive_background, theme)
+            mtrButton.isActivated = false
         }
         
         setInactive(currentTextView)
@@ -130,7 +131,7 @@ class GameActivity : Activity() {
     
     private fun switchFocusedTextView(){
         val nextTVPos = currentTextViewPos + 1
-        if (nextTVPos < throwTextView.size) setCurrentTextView(throwTextView[nextTVPos], nextTVPos)
+        if (nextTVPos < throwTextView.size) setCurrentButton(throwTextView[nextTVPos], nextTVPos)
     }
     
     private fun setThrowTVText(){
@@ -151,7 +152,7 @@ class GameActivity : Activity() {
         //new object so the history doesn't get changed | alternative copy throw points then passed to nextPlayerThrow
         throwPoints = Turn(Array(throwTextView.size) { Point.instanceByPoints(1, 0) }) // reset auf null
         setThrowTVText()
-        setCurrentTextView(throwTextView[0], 0)
+        setCurrentButton(throwTextView[0], 0)
         
         updateClosingInfo()
     }
@@ -169,7 +170,7 @@ class GameActivity : Activity() {
         allPlayerList.removeAllViews()
         
         for (player in players){
-            val view = layoutInflater.inflate(R.layout.all_player_row, allPlayerList, false)
+            val view = layoutInflater.inflate(R.layout.item_game_player, allPlayerList, false)
             view.apply {
                 playerTV.text = player.name
                 playerScoreTV.text = player.points.toString()
@@ -190,7 +191,7 @@ class GameActivity : Activity() {
     }
     
     private fun updateClosingInfo(){
-        doAsync {
+        /*doAsync {
             val closingMoves = game.calculateClosingThrows(throwPoints.deepCopy())
             
             uiThread {
@@ -203,7 +204,7 @@ class GameActivity : Activity() {
                     }
                 }
             }
-        }
+        }*/
     }
     
     inner class ListAdapter(var data: List<Turn>): BaseAdapter(){
