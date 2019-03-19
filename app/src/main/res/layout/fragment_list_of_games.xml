@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         tools:context="com.example.eloem.dartCounter.ListOfGamesFragment"
         android:clipToPadding="false"
+        android:clipChildren="false"
         android:divider="@drawable/transparent"
         android:paddingTop="4dp" />
 

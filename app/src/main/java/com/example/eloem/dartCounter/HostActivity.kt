@@ -92,9 +92,9 @@ class HostActivity : AppCompatActivity() {
                 }
             }*/
             
-            onMainFabPressed?.invoke()
+                onMainFabPressed?.invoke()
+            }
         }
-    }
     
     companion object {
         private const val TAG = "HostActivity"
