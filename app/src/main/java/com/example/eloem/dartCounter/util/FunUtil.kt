@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Environment
+import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -48,12 +49,17 @@ fun Context.getAttribute(@AttrRes resourceId: Int, resolveRef: Boolean = true): 
  * converts a pixel int to a dp int
  */
 val Int.dp: Int
-    get() = (this / Resources.getSystem().displayMetrics.density).toInt()
+    get() {
+        return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                this.toFloat(),
+                Resources.getSystem().displayMetrics).toInt()
+    }
 /**
  * converts a dp int to a pixel int
  */
 val Int.px: Int
-    get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+    get() = (this / (Resources.getSystem().displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT))
 /*
 fun Array<DartGame.Point>.throwsLeft(): Int{
     var throwsLeft = 0

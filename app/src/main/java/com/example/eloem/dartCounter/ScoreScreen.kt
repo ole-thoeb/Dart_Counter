@@ -129,15 +129,15 @@ class ScoreScreen : AppCompatActivity() {
         
         override fun getItem(position: Int): androidx.fragment.app.Fragment = when(position){
             0 -> {
-                firstFragment = OverviewFragment.newInstance(gameId!!)
+                firstFragment = OverviewFragment/*.newInstance*/(/*gameId!!*/)
                 firstFragment!!
             }
             1 -> {
-                secondFragment = DiagramFragment.newInstance(gameId!!)
+                secondFragment = DiagramFragment/*.newInstance*/(/*gameId!!*/)
                 secondFragment!!
             }
             
-            else -> OverviewFragment.newInstance(gameId!!)
+            else -> OverviewFragment()/*.newInstance(gameId!!)*/
         }
         
         override fun getCount(): Int {

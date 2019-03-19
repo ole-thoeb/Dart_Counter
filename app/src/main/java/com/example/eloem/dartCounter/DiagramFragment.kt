@@ -19,7 +19,7 @@ import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.utils.ViewPortHandler
 import kotlinx.android.synthetic.main.fragment_statistic.*
-import kotlinx.android.synthetic.main.select_player_item.view.*
+import kotlinx.android.synthetic.main.item_overview_select_player.view.*
 
 /**
  * A simple [Fragment] subclass.
@@ -56,7 +56,7 @@ class DiagramFragment : androidx.fragment.app.Fragment() {
         styleDiagram()
         selectedPlayer = BooleanArray(game.players.size){_ -> true}
         game.players.forEachIndexed {index, player ->
-            val item = layoutInflater.inflate(R.layout.select_player_item, selectPlayerList, false)
+            val item = layoutInflater.inflate(R.layout.item_overview_select_player, selectPlayerList, false)
             item.playerName.text = player.name
             item.radioButton.setOnClickListener {
                 it as CheckBox

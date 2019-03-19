@@ -4,8 +4,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class PaddingAdapter<VH: RecyclerView.ViewHolder>(private val delegate: RecyclerView.Adapter<VH>,
-                                                  private val bottomPadding: Int):
+class BottomSpacingAdapter<VH: RecyclerView.ViewHolder>(private val delegate: RecyclerView.Adapter<VH>,
+                                                        private val spacing: Int,
+                                                        private val spanCount: Int = 1):
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     
     class PaddingVH(layout: View): RecyclerView.ViewHolder(layout)
@@ -13,14 +14,14 @@ class PaddingAdapter<VH: RecyclerView.ViewHolder>(private val delegate: Recycler
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == PADDING_VIEW_TYPE) {
             val view = View(parent.context)
-            view.layoutParams = ViewGroup.LayoutParams(0, bottomPadding)
+            view.layoutParams = ViewGroup.LayoutParams(0, spacing)
             PaddingVH(view)
         } else {
             delegate.onCreateViewHolder(parent, viewType)
         }
     }
     
-    override fun getItemCount(): Int = delegate.itemCount + 1
+    override fun getItemCount(): Int = delegate.itemCount + spanCount
     
     @Suppress("UNCHECKED_CAST")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -34,7 +35,7 @@ class PaddingAdapter<VH: RecyclerView.ViewHolder>(private val delegate: Recycler
     }
     
     override fun getItemViewType(position: Int): Int {
-        return if (position == delegate.itemCount) PADDING_VIEW_TYPE
+        return if (position >= delegate.itemCount) PADDING_VIEW_TYPE
         else delegate.getItemViewType(position)
     }
     
@@ -97,12 +98,12 @@ class PaddingAdapter<VH: RecyclerView.ViewHolder>(private val delegate: Recycler
     }
     
     override fun equals(other: Any?): Boolean =
-            other is PaddingAdapter<*> &&
+            other is BottomSpacingAdapter<*> &&
             other.delegate == delegate &&
-            other.bottomPadding == bottomPadding
+            other.spacing == spacing
     
     override fun hashCode(): Int {
-        return delegate.hashCode() + bottomPadding.hashCode()
+        return delegate.hashCode() + spacing.hashCode()
     }
     
     companion object {

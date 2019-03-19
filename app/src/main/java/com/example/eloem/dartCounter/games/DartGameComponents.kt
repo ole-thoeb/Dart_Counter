@@ -31,6 +31,10 @@ data class Player(val id: Int,
     }
     
     val startingPoints: Int get() = if (history.isNotEmpty()) history.first().pointsBefore else 0
+    
+    companion object {
+        fun empty() = Player(-1, "", 0, mutableListOf())
+    }
 }
 
 @Parcelize

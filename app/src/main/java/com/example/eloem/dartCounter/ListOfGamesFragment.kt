@@ -1,101 +1,118 @@
 package com.example.eloem.dartCounter
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateFormat
-import android.view.Menu
-import android.view.MenuItem
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.eloem.dartCounter.database.deleteAllGamesComplete
 import com.example.eloem.dartCounter.database.deleteCompleteGame
 import com.example.eloem.dartCounter.database.getAllGames
 import com.example.eloem.dartCounter.database.insertCompleteGame
 import com.example.eloem.dartCounter.games.DartGame
+import com.example.eloem.dartCounter.recyclerview.BottomSpacingAdapter
 import com.example.eloem.dartCounter.recyclerview.ContextAdapter
 import com.example.eloem.dartCounter.recyclerview.GridSpacingItemDecoration
-import com.example.eloem.dartCounter.recyclerview.PaddingAdapter
 import com.example.eloem.dartCounter.util.dp
 import com.example.eloem.dartCounter.util.newGameID
 import com.example.eloem.dartCounter.util.newPlayerID
 import com.google.android.material.card.MaterialCardView
 import emil.beothy.utilFun.deepCopy
-import kotlinx.android.synthetic.main.activity_list_of_games.*
+import kotlinx.android.synthetic.main.fragment_list_of_games.*
 import java.util.*
 
-
-class ListOfGamesActivity : AppCompatActivity() {
+class ListOfGamesFragment : Fragment() {
     private lateinit var recyclerViewAdapter: MyListAdapter
     
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_list_of_games)
-        setSupportActionBar(toolbar)
-        
-        //real data is set in onResume
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_list_of_games, container, false)
+    }
+    
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+    
         recyclerViewAdapter = MyListAdapter(mutableListOf())
+        
         list.apply {
-            layoutManager = GridLayoutManager(this@ListOfGamesActivity, 2)
+            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             addItemDecoration(
                     GridSpacingItemDecoration(2,
                             resources.getDimensionPixelSize(R.dimen.cardGridSpacing),
                             true)
             )
-            adapter = PaddingAdapter(recyclerViewAdapter, 10.dp)
+            adapter = BottomSpacingAdapter(recyclerViewAdapter, 30.dp, 2)
+            //adapter = recyclerViewAdapter
             emptyView = empty
         }
         
-        newGameFAB.setOnClickListener {
-            startActivity(Intent(this, NewDartGameActivity::class.java))
-        }
-    }
-    
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.activity_list_of_games_menu, menu)
-        return true
-    }
-    
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean = when(item?.itemId){
-        R.id.deleteAllGames -> {
-            deleteAllGamesComplete(this)
-            recyclerViewAdapter.data = mutableListOf()
-            recyclerViewAdapter.notifyDataSetChanged()
-            true
-        }
-        R.id.deleteAllFinishedGames -> {
-            recyclerViewAdapter.data.forEachIndexed { index, dartGame ->
-                if (dartGame.isFinished) {
-                    recyclerViewAdapter.data.remove(dartGame)
-                    deleteCompleteGame(this, dartGame)
-                    recyclerViewAdapter.notifyItemRemoved(index)
-                }
+        (activity as HostActivity?)?.apply {
+            onMainFabPressed = {
+                findNavController().navigate(R.id.action_listOfGamesFragment_to_newDartGameFragment)
             }
-            true
-        }
-        R.id.deleteAllRunningGames -> {
-            recyclerViewAdapter.data.forEachIndexed { index, dartGame ->
-                if (!dartGame.isFinished) {
-                    recyclerViewAdapter.data.remove(dartGame)
-                    deleteCompleteGame(this, dartGame)
-                    recyclerViewAdapter.notifyItemRemoved(index)
+            onMenuItemSelected = { when(it.itemId) {
+                R.id.deleteAllGames -> {
+                    deleteAllGamesComplete(this)
+                    recyclerViewAdapter.data = mutableListOf()
+                    recyclerViewAdapter.notifyDataSetChanged()
+                    true
                 }
-            }
-            true
+                R.id.deleteAllFinishedGames -> {
+                    val toRemove = mutableMapOf<Int, DartGame>()
+                    recyclerViewAdapter.data.forEachIndexed { index, dartGame ->
+                        if (dartGame.isFinished) {
+                            toRemove[index] = dartGame
+                            deleteCompleteGame(this, dartGame)
+                        }
+                    }
+                    if (toRemove.isNotEmpty()) {
+                        recyclerViewAdapter.data.removeAll(toRemove.values)
+        
+                        if (toRemove.size == 1) {
+                            recyclerViewAdapter.notifyItemRemoved(toRemove.keys.first())
+                        } else {
+                            recyclerViewAdapter.notifyDataSetChanged()
+                        }
+                    }
+                    true
+                }
+                R.id.deleteAllRunningGames -> {
+                    val toRemove = mutableMapOf<Int, DartGame>()
+                    recyclerViewAdapter.data.forEachIndexed { index, dartGame ->
+                        if (!dartGame.isFinished) {
+                            toRemove[index] = dartGame
+                            deleteCompleteGame(this, dartGame)
+                        }
+                    }
+                    if (toRemove.isNotEmpty()) {
+                        recyclerViewAdapter.data.removeAll(toRemove.values)
+                        
+                        if (toRemove.size == 1) {
+                            recyclerViewAdapter.notifyItemRemoved(toRemove.keys.first())
+                        } else {
+                            recyclerViewAdapter.notifyDataSetChanged()
+                        }
+                    }
+                    true
+                }
+                else -> false
+            }}
         }
-        else -> super.onOptionsItemSelected(item)
     }
     
     override fun onResume() {
         super.onResume()
-        recyclerViewAdapter.data = getAllGames(this)
-        recyclerViewAdapter.notifyDataSetChanged()
+        context?.let {
+            recyclerViewAdapter.data = getAllGames(it)
+            recyclerViewAdapter.notifyDataSetChanged()
+        }
     }
     
     class MyListAdapter(var data: MutableList<DartGame>): ContextAdapter<MyListAdapter.GameViewHolder>(){
@@ -132,14 +149,14 @@ class ListOfGamesActivity : AppCompatActivity() {
                 }
                 card.setOnClickListener {
                     if (game.isFinished){
-                        startActivity(context,
-                                Intent(context, ScoreScreen::class.java).putExtra(ScoreScreen.GAME_ID_ARG, game.id),
-                                null
+                        Navigation.findNavController(recyclerView).navigate(
+                                ListOfGamesFragmentDirections
+                                        .actionListOfGamesFragmentToOverviewFragment(game.id)
                         )
-                    }else {
-                        startActivity(context,
-                                Intent(context, GameActivity::class.java).putExtra(GameActivity.DART_GAME_EXTRA, game.id),
-                                null
+                    } else {
+                        Navigation.findNavController(recyclerView).navigate(
+                                ListOfGamesFragmentDirections
+                                        .actionListOfGamesFragmentToGameFragment(game.id)
                         )
                     }
                 }
@@ -168,11 +185,10 @@ class ListOfGamesActivity : AppCompatActivity() {
                                             },
                                             pDate = Calendar.getInstance().time)
                                     insertCompleteGame(context, newGame)
-                            
-                                    startActivity(context,
-                                            Intent(context, GameActivity::class.java)
-                                                    .putExtra(GameActivity.DART_GAME_EXTRA, newGame.id),
-                                            null
+    
+                                    Navigation.findNavController(recyclerView).navigate(
+                                            ListOfGamesFragmentDirections
+                                                    .actionListOfGamesFragmentToGameFragment(newGame.id)
                                     )
                                     true
                                 }

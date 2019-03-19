@@ -13,18 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/LightAppTheme">
-        <activity android:name=".HostActivity"></activity>
         <activity
-            android:name=".NewDartGameActivity"
-            android:parentActivityName=".ListOfGamesActivity"
-            android:theme="@style/LightAppTheme.BottomAppBar" />
-        <activity
-            android:name=".GameActivity"
-            android:parentActivityName=".ListOfGamesActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/LightAppTheme.BottomAppBar" />
-        <activity
-            android:name=".ListOfGamesActivity"
+            android:name=".HostActivity"
             android:theme="@style/LightAppTheme.BottomAppBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,10 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ScoreScreen"
-            android:parentActivityName=".ListOfGamesActivity"
-            android:theme="@style/LightAppTheme.NoActionBar" />
     </application>
 
 </manifest>

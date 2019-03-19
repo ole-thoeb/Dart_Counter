@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linLayout"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="@dimen/bigPadding"
-    android:foreground="?attr/selectableItemBackground">
+    android:foreground="?attr/selectableItemBackground"
+    android:backgroundTint="@android:color/transparent"
+    app:strokeColor="?attr/colorPrimary"
+    app:cardElevation="0dp"
+    app:rippleColor="?attr/colorPrimary">
 
-    <TextView
-        android:id="@+id/playerTV"
-        style="@style/OneLineTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceBody1"/>
-
-    <TextView
-        android:id="@+id/playerScoreTV"
-        style="@style/OneLineTextView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="textEnd"
-        android:textAppearance="?attr/textAppearanceBody1"/>
+        android:orientation="horizontal"
+        android:padding="@dimen/bigPadding">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/playerTV"
+            style="@style/OneLineTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"/>
+
+        <TextView
+            android:id="@+id/playerScoreTV"
+            style="@style/OneLineTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="textEnd"
+            android:textAppearance="?attr/textAppearanceBody1"/>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
