@@ -22,14 +22,11 @@ import com.example.eloem.dartCounter.games.DartGame
 import com.example.eloem.dartCounter.recyclerview.BottomSpacingAdapter
 import com.example.eloem.dartCounter.recyclerview.ContextAdapter
 import com.example.eloem.dartCounter.recyclerview.GridSpacingItemDecoration
-import com.example.eloem.dartCounter.util.dp
-import com.example.eloem.dartCounter.util.newGameID
-import com.example.eloem.dartCounter.util.newPlayerID
+import com.example.eloem.dartCounter.util.*
 import com.google.android.material.card.MaterialCardView
 import emil.beothy.utilFun.deepCopy
 import kotlinx.android.synthetic.main.fragment_list_of_games.*
 import java.lang.IllegalArgumentException
-import java.lang.IllegalStateException
 import java.util.*
 
 class ListOfGamesFragment : Fragment() {
@@ -51,9 +48,11 @@ class ListOfGamesFragment : Fragment() {
                             resources.getDimensionPixelSize(R.dimen.cardGridSpacing),
                             true)
             )
-            adapter = BottomSpacingAdapter(recyclerViewAdapter, 30.dp, 2)
+            adapter = BottomSpacingAdapter(recyclerViewAdapter,
+                    30.dp + getDimenAttr(R.attr.actionBarSize), 2)
             //adapter = recyclerViewAdapter
             emptyView = empty
+            emptyThreshold = 2
         }
         
         (activity as HostActivity?)?.apply {

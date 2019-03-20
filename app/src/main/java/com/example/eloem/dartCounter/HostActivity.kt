@@ -1,10 +1,10 @@
 package com.example.eloem.dartCounter
 
+import android.content.res.Configuration
 import android.graphics.drawable.Animatable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import androidx.navigation.findNavController
 import kotlinx.android.synthetic.main.activity_host.*
 
@@ -23,6 +23,10 @@ class HostActivity : AppCompatActivity() {
                 if (curNavId == R.id.listOfGamesFragment) R.drawable.add_to_check
                 else R.drawable.check_to_add
         ))
+        
+        /*if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            bottomAppBar.hideOnScroll = true
+        }*/
        
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             if (curNavId == R.id.listOfGamesFragment &&

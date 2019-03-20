@@ -19,7 +19,11 @@
         android:id="@+id/empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="List is empty"
-        android:layout_gravity="center"/>
+        android:text="@string/noGames"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textColor="?attr/colorOnBackground"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:layout_margin="8dp"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

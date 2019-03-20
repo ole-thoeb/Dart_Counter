@@ -15,6 +15,7 @@ import com.example.eloem.dartCounter.games.MasterOutGame
 import com.example.eloem.dartCounter.games.SingleOutGame
 import com.example.eloem.dartCounter.games.Player
 import com.example.eloem.dartCounter.helperClasses.BetterEditText
+import com.example.eloem.dartCounter.recyclerview.BottomSpacingAdapter
 import com.example.eloem.dartCounter.recyclerview.EditListAdapter
 import com.example.eloem.dartCounter.util.*
 import kotlinx.android.synthetic.main.fragment_new_dartgame.*
@@ -25,6 +26,7 @@ class NewDartGameFragment : Fragment() {
     
     private lateinit var rvAdapter: PlayerEditAdapter
     private val vm: SharedViewModel by fragmentViewModel()
+    private val gVm: GameFragment.GameViewModel by activityViewModel()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_new_dartgame, container, false)
@@ -40,7 +42,7 @@ class NewDartGameFragment : Fragment() {
         
         rvAdapter = PlayerEditAdapter(initPlayers, initModePos, initPointPos)
         playerList.apply {
-            adapter = rvAdapter
+            adapter = BottomSpacingAdapter(rvAdapter, getDimenAttr(R.attr.actionBarSize) + 30.dp)
             layoutManager = LinearLayoutManager(requireContext())
         }
         
@@ -88,6 +90,8 @@ class NewDartGameFragment : Fragment() {
         
         hideSoftKeyboard(requireContext(), view?.findFocus())
     
+        //when retrieving players, sometimes writing all players is not finished
+        gVm.game = dartGame
         findNavController().navigate(
                 NewDartGameFragmentDirections
                         .actionNewDartGameFragmentToGameFragment(dartGame.id)

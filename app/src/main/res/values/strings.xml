@@ -9,6 +9,8 @@
 
     <string name="noPlayer">Du must mindestens ein Spieler hinzufügen</string>
 
+    <string name="noGames">Um ein Spiel zu starten drücke unten auf das +</string>
+
     <string name="winMessage">%1$s hat gewonnen</string>
     <string name="drawMessage">Gleichstand zwischen %1$s </string>
 
@@ -72,8 +74,4 @@
     <string name="bustedPoints">Punkte bustet</string>
     <string name="timesBusted">Anzahl der Busts</string>
     <string name="mostHit">Häufigster Punkt</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
 </resources>

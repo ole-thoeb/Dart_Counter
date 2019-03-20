@@ -10,11 +10,13 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.eloem.dartCounter.games.*
 import com.example.eloem.dartCounter.database.getOutGame
 import com.example.eloem.dartCounter.database.updateNewTurn
+import com.example.eloem.dartCounter.util.activityViewModel
 import com.example.eloem.dartCounter.util.dp
 import com.example.eloem.dartCounter.util.fragmentViewModel
 import com.google.android.material.button.MaterialButton
@@ -28,6 +30,7 @@ class GameFragment : Fragment() {
     private lateinit var currentTextView: MaterialButton
     
     private val vm: SharedViewModel by fragmentViewModel()
+    private val gVm: GameViewModel by activityViewModel()
     
     private lateinit var game: OutGame
     private val arg: GameFragmentArgs by navArgs()
@@ -46,8 +49,9 @@ class GameFragment : Fragment() {
         setCurrentButton(currentTextView, vm.curThrow)
         
         throwTextView.forEach { mtrButton -> mtrButton.setOnClickListener { onClick(it) } }
-        Log.d("GameFragment", "now getting viewmodel")
-        game = vm.getOutGame(arg.gameId)
+        
+        //when retrieving players, sometimes writing all players is not finished
+        game = gVm.game ?: vm.getOutGame(arg.gameId)
         game.onGameFinish = {
             findNavController().navigate(
                     GameFragmentDirections.actionGameFragmentToOverviewFragment(game.id))
@@ -256,6 +260,13 @@ class GameFragment : Fragment() {
         val throwPoints: Turn = Turn(Array(3) { Point.instanceByPoints(1, 0) })
         
         var curThrow: Int = 0
+    }
+    
+    class GameViewModel: ViewModel() {
+        var game: OutGame? = null
+            get() = field.also {
+                field = null
+            }
     }
     
     companion object {

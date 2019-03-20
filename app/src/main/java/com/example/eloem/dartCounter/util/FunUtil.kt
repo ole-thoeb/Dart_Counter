@@ -50,6 +50,10 @@ fun Context.getAttribute(@AttrRes resourceId: Int, resolveRef: Boolean = true): 
     return tv
 }
 
+fun Fragment.getDimenAttr(@AttrRes resourceId: Int): Int {
+    return resources.getDimensionPixelSize(requireContext().getAttribute(resourceId).resourceId)
+}
+
 /**
  * converts a pixel int to a dp int
  */
@@ -65,32 +69,6 @@ val Int.dp: Int
  */
 val Int.px: Int
     get() = (this / (Resources.getSystem().displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT))
-/*
-fun Array<DartGame.Point>.throwsLeft(): Int{
-    var throwsLeft = 0
-    
-    forEachIndexed { index, point ->
-        if (point.value == 0){
-            if (index + 1 < size){
-                if (get(index + 1).value == 0) throwsLeft ++
-            }else throwsLeft ++
-        }
-    }
-    return throwsLeft
-}
-
-fun Array<DartGame.Point>.alreadyThrown():List<DartGame.Point>{
-    val list = mutableListOf<DartGame.Point>()
-    
-    for ((index, point) in this.withIndex()) {
-        if (point.value == 0){
-            if (index + 1 < size){
-                if (get(index + 1).value != 0) list.add(get(index))
-            }
-        }else list.add(get(index))
-    }
-    return list.toList()
-}*/
 
 fun writeDatabase(context: Context){
     val sd = Environment.getExternalStorageDirectory()
@@ -114,15 +92,19 @@ fun writeDatabase(context: Context){
 }
 
 inline fun <reified T: ViewModel>Fragment.fragmentViewModel(): ViewModelDelegateProvider<T> {
-    return ViewModelDelegateProvider(this, T::class.java)
+    return ViewModelDelegateProvider({ ViewModelProviders.of(this) }, T::class.java)
 }
 
-class ViewModelDelegateProvider<T: ViewModel>(private val fragment: Fragment,
+inline fun <reified T: ViewModel>Fragment.activityViewModel(): ViewModelDelegateProvider<T> {
+    return ViewModelDelegateProvider({ ViewModelProviders.of(this.requireActivity()) }, T::class.java)
+}
+
+class ViewModelDelegateProvider<T: ViewModel>(lazyFactory: () -> ViewModelProvider,
                                               private val viewModelClass: Class<T>): Lazy<T> {
     
     private var cached: T? = null
     
-    private val factory by lazy(LazyThreadSafetyMode.NONE) { ViewModelProviders.of(fragment) }
+    private val factory by lazy(LazyThreadSafetyMode.NONE, lazyFactory)
     
     override val value: T
         get() {

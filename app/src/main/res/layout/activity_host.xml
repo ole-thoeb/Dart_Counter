@@ -12,8 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_graph"
-        android:layout_marginBottom="?attr/actionBarSize"/>
+        app:navGraph="@navigation/nav_graph"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/mainFAB"
@@ -26,6 +25,7 @@
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_gravity="bottom"/>
+        android:layout_gravity="bottom"
+        app:hideOnScroll="true"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

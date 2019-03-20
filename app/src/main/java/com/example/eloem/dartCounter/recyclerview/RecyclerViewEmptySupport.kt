@@ -12,6 +12,8 @@ class RecyclerViewEmptySupport : RecyclerView {
             checkIfEmpty()
         }
     
+    var emptyThreshold: Int = 0
+    
     private val observer = object : AdapterDataObserver() {
         override fun onChanged() {
             checkIfEmpty()
@@ -36,7 +38,7 @@ class RecyclerViewEmptySupport : RecyclerView {
         emptyView?.let {
             val cAdapter = adapter
             if (cAdapter != null) {
-                val emptyViewVisible = cAdapter.itemCount == 0
+                val emptyViewVisible = cAdapter.itemCount <= emptyThreshold
                 it.visibility = if (emptyViewVisible) VISIBLE else GONE
                 visibility = if (emptyViewVisible) GONE else VISIBLE
             }
