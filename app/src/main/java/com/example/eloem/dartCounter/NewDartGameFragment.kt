@@ -24,7 +24,7 @@ import java.lang.Error
 class NewDartGameFragment : Fragment() {
     
     private lateinit var rvAdapter: PlayerEditAdapter
-    private lateinit var vm: SharedViewModel
+    private val vm: SharedViewModel by fragmentViewModel()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_new_dartgame, container, false)
@@ -32,8 +32,6 @@ class NewDartGameFragment : Fragment() {
     
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        
-        vm = ViewModelProviders.of(this).get(SharedViewModel::class.java)
     
         val initPlayers = vm.players
         

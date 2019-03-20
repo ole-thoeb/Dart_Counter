@@ -4,6 +4,7 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.util.Log
 import com.example.eloem.dartCounter.util.differentShade
+import com.example.eloem.dartCounter.util.dp
 
 class DartboardDrawable(val c1: Int = Color.RED, val c2: Int = Color.GREEN): Drawable() {
     
@@ -35,26 +36,26 @@ class DartboardDrawable(val c1: Int = Color.RED, val c2: Int = Color.GREEN): Dra
     
     private var outerPath: Path = Path()
     
-    private var pathNumber20: Path = Path()
-    private var pathNumber1: Path = Path()
-    private var pathNumber18: Path = Path()
-    private var pathNumber4: Path = Path()
-    private var pathNumber13: Path = Path()
-    private var pathNumber6: Path = Path()
-    private var pathNumber10: Path = Path()
-    private var pathNumber15: Path = Path()
-    private var pathNumber2: Path = Path()
-    private var pathNumber17: Path = Path()
-    private var pathNumber3: Path = Path()
-    private var pathNumber19: Path = Path()
-    private var pathNumber7: Path = Path()
-    private var pathNumber16: Path = Path()
-    private var pathNumber8: Path = Path()
-    private var pathNumber11: Path = Path()
-    private var pathNumber14: Path = Path()
-    private var pathNumber9: Path = Path()
-    private var pathNumber12: Path = Path()
-    private var pathNumber5: Path = Path()
+    //private var pathNumber20: Path = Path()
+    //private var pathNumber1: Path = Path()
+    //private var pathNumber18: Path = Path()
+    //private var pathNumber4: Path = Path()
+    //private var pathNumber13: Path = Path()
+    //private var pathNumber6: Path = Path()
+    //private var pathNumber10: Path = Path()
+    //private var pathNumber15: Path = Path()
+    //private var pathNumber2: Path = Path()
+    //private var pathNumber17: Path = Path()
+    //private var pathNumber3: Path = Path()
+    //private var pathNumber19: Path = Path()
+    //private var pathNumber7: Path = Path()
+    //private var pathNumber16: Path = Path()
+    //private var pathNumber8: Path = Path()
+    //private var pathNumber11: Path = Path()
+    //private var pathNumber14: Path = Path()
+    //private var pathNumber9: Path = Path()
+    //private var pathNumber12: Path = Path()
+    //private var pathNumber5: Path = Path()
     
     private val paint1_0 = Paint().apply {
         style = Paint.Style.FILL
@@ -154,6 +155,8 @@ class DartboardDrawable(val c1: Int = Color.RED, val c2: Int = Color.GREEN): Dra
         
         //set stroke width
         boarderPaint.strokeWidth = scale(1f)
+    
+        numberPaint.textSize = scale(9f)
         
         path20.apply {
             reset()
@@ -328,7 +331,7 @@ class DartboardDrawable(val c1: Int = Color.RED, val c2: Int = Color.GREEN): Dra
             addCircle(scale(79.375f), scale(79.375f), scale(76.5f), Path.Direction.CW)
         }
         
-        pathNumber20.apply {
+        /*pathNumber20.apply {
             reset()
             moveTo(scale(78.889f), scale(12.95f))
             lineTo(scale(78.889f), scale(14.023f))
@@ -858,7 +861,7 @@ class DartboardDrawable(val c1: Int = Color.RED, val c2: Int = Color.GREEN): Dra
             cubicTo(scale(57.621f), scale(18.827f), scale(56.344f), scale(18.597f), scale(55.61f), scale(17.702f))
             cubicTo(scale(55.238f), scale(17.265f), scale(55.038f), scale(16.703f), scale(54.986f), scale(16.136f))
             close()
-        }
+        }*/
     }
     
     override fun draw(canvas: Canvas) {
@@ -891,27 +894,46 @@ class DartboardDrawable(val c1: Int = Color.RED, val c2: Int = Color.GREEN): Dra
             drawPath(path25, boarderPaint)
             drawPath(outerPath, boarderPaint)
             
-            drawPath(pathNumber20, numberPaint)
-            drawPath(pathNumber20, numberPaint)
-            drawPath(pathNumber1, numberPaint)
-            drawPath(pathNumber18, numberPaint)
-            drawPath(pathNumber4, numberPaint)
-            drawPath(pathNumber13, numberPaint)
-            drawPath(pathNumber6, numberPaint)
-            drawPath(pathNumber10, numberPaint)
-            drawPath(pathNumber15, numberPaint)
-            drawPath(pathNumber2, numberPaint)
-            drawPath(pathNumber17, numberPaint)
-            drawPath(pathNumber3, numberPaint)
-            drawPath(pathNumber19, numberPaint)
-            drawPath(pathNumber7, numberPaint)
-            drawPath(pathNumber8, numberPaint)
-            drawPath(pathNumber16, numberPaint)
-            drawPath(pathNumber11, numberPaint)
-            drawPath(pathNumber14, numberPaint)
-            drawPath(pathNumber9, numberPaint)
-            drawPath(pathNumber12, numberPaint)
-            drawPath(pathNumber5, numberPaint)
+            //drawPath(pathNumber20, numberPaint)
+            drawText("20", scale(74.5f), scale(12.95f), numberPaint)
+            drawText("1", scale(98f), scale(16f), numberPaint)
+            drawText("18", scale(115f), scale(26f), numberPaint)
+            drawText("4", scale(133.5f), scale(41f), numberPaint)
+            drawText("13", scale(140f), scale(62f), numberPaint)
+            drawText("6", scale(147f), scale(83f), numberPaint)
+            drawText("10", scale(139.5f), scale(103.5f), numberPaint)
+            drawText("15", scale(129f), scale(122.5f), numberPaint)
+            drawText("2", scale(118f), scale(138.227f), numberPaint)
+            drawText("17", scale(95.5f), scale(149.025f), numberPaint)
+            drawText("3", scale(76.387f), scale(151.099f), numberPaint)
+            drawText("19", scale(53f), scale(147.5f), numberPaint)
+            drawText("7", scale(36.778f), scale(137f), numberPaint)
+            drawText("16", scale(19f), scale(122f), numberPaint)
+            drawText("8", scale(11f), scale(104f), numberPaint)
+            drawText("11", scale(6f), scale(83f), numberPaint)
+            drawText("14", scale(10f), scale(62f), numberPaint)
+            drawText("9", scale(20.533f), scale(41f), numberPaint)
+            drawText("12", scale(34f), scale(27f), numberPaint)
+            drawText("5", scale(54.986f), scale(16.136f), numberPaint)
+            //drawPath(pathNumber1, numberPaint)
+            //drawPath(pathNumber18, numberPaint)
+            //drawPath(pathNumber4, numberPaint)
+            //drawPath(pathNumber13, numberPaint)
+            //drawPath(pathNumber6, numberPaint)
+            //drawPath(pathNumber10, numberPaint)
+            //drawPath(pathNumber15, numberPaint)
+            //drawPath(pathNumber2, numberPaint)
+            //drawPath(pathNumber17, numberPaint)
+            //drawPath(pathNumber3, numberPaint)
+            //drawPath(pathNumber19, numberPaint)
+            //drawPath(pathNumber7, numberPaint)
+            //drawPath(pathNumber8, numberPaint)
+            //drawPath(pathNumber16, numberPaint)
+            //drawPath(pathNumber11, numberPaint)
+            //drawPath(pathNumber14, numberPaint)
+            //drawPath(pathNumber9, numberPaint)
+            //drawPath(pathNumber12, numberPaint)
+            //drawPath(pathNumber5, numberPaint)
         }
     }
     

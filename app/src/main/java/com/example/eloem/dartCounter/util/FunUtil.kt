@@ -9,9 +9,14 @@ import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.AttrRes
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import kotlin.reflect.KProperty
 
 
 /*
@@ -106,4 +111,23 @@ fun writeDatabase(context: Context){
             dst.close()
         }
     }
+}
+
+inline fun <reified T: ViewModel>Fragment.fragmentViewModel(): ViewModelDelegateProvider<T> {
+    return ViewModelDelegateProvider(this, T::class.java)
+}
+
+class ViewModelDelegateProvider<T: ViewModel>(private val fragment: Fragment,
+                                              private val viewModelClass: Class<T>): Lazy<T> {
+    
+    private var cached: T? = null
+    
+    private val factory by lazy(LazyThreadSafetyMode.NONE) { ViewModelProviders.of(fragment) }
+    
+    override val value: T
+        get() {
+            return cached ?: factory.get(viewModelClass).also { cached = it }
+        }
+    
+    override fun isInitialized(): Boolean = cached == null
 }

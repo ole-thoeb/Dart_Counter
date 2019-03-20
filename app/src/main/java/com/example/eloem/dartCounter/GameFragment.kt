@@ -3,19 +3,20 @@ package com.example.eloem.dartCounter
 import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import android.view.*
 import android.widget.BaseAdapter
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.eloem.dartCounter.games.*
 import com.example.eloem.dartCounter.database.getOutGame
 import com.example.eloem.dartCounter.database.updateNewTurn
 import com.example.eloem.dartCounter.util.dp
+import com.example.eloem.dartCounter.util.fragmentViewModel
 import com.google.android.material.button.MaterialButton
 import kotlinx.android.synthetic.main.fragment_game.*
 import kotlinx.android.synthetic.main.item_game_player.view.*
@@ -26,7 +27,7 @@ class GameFragment : Fragment() {
     private lateinit var throwTextView: Array<MaterialButton>
     private lateinit var currentTextView: MaterialButton
     
-    private lateinit var vm: SharedViewModel
+    private val vm: SharedViewModel by fragmentViewModel()
     
     private lateinit var game: OutGame
     private val arg: GameFragmentArgs by navArgs()
@@ -38,14 +39,14 @@ class GameFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
     
-        vm = ViewModelProviders.of(this).get(SharedViewModel::class.java)
+        /*vm = ViewModelProviders.of(this).get(SharedViewModel::class.java)*/
         throwTextView = arrayOf(throw1mtrButton, throw2mtrButton, throw3mtrButton)
         
         currentTextView = throwTextView[vm.curThrow]
         setCurrentButton(currentTextView, vm.curThrow)
         
         throwTextView.forEach { mtrButton -> mtrButton.setOnClickListener { onClick(it) } }
-    
+        Log.d("GameFragment", "now getting viewmodel")
         game = vm.getOutGame(arg.gameId)
         game.onGameFinish = {
             findNavController().navigate(

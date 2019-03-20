@@ -2,6 +2,7 @@ package com.example.eloem.dartCounter
 
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,8 @@ import com.example.eloem.dartCounter.util.newPlayerID
 import com.google.android.material.card.MaterialCardView
 import emil.beothy.utilFun.deepCopy
 import kotlinx.android.synthetic.main.fragment_list_of_games.*
+import java.lang.IllegalArgumentException
+import java.lang.IllegalStateException
 import java.util.*
 
 class ListOfGamesFragment : Fragment() {
@@ -148,16 +151,21 @@ class ListOfGamesFragment : Fragment() {
                     else -> context.getString(R.string.error)
                 }
                 card.setOnClickListener {
-                    if (game.isFinished){
-                        Navigation.findNavController(recyclerView).navigate(
-                                ListOfGamesFragmentDirections
-                                        .actionListOfGamesFragmentToOverviewFragment(game.id)
-                        )
-                    } else {
-                        Navigation.findNavController(recyclerView).navigate(
-                                ListOfGamesFragmentDirections
-                                        .actionListOfGamesFragmentToGameFragment(game.id)
-                        )
+                    try {
+                        if (game.isFinished) {
+                            Navigation.findNavController(recyclerView).navigate(
+                                    ListOfGamesFragmentDirections
+                                            .actionListOfGamesFragmentToOverviewFragment(game.id)
+                            )
+                        } else {
+                            Navigation.findNavController(recyclerView).navigate(
+                                    ListOfGamesFragmentDirections
+                                            .actionListOfGamesFragmentToGameFragment(game.id)
+                            )
+                        }
+                    } catch (e: IllegalArgumentException) {
+                        //happens when 2 cards are pressed at the same time
+                        Log.e("ListOfGamesFragment", e.localizedMessage)
                     }
                 }
                 optionButton.setOnClickListener { button ->
