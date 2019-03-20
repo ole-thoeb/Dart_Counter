@@ -19,7 +19,6 @@
         android:id="@+id/mainFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add"
         android:tint="?attr/colorOnSecondary"
         app:layout_anchor="@id/bottomAppBar"/>
 

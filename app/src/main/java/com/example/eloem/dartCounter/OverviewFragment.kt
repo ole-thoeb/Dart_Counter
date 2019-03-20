@@ -1,37 +1,52 @@
 package com.example.eloem.dartCounter
 
-
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.*
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.eloem.dartCounter.games.HistoryTurn
 import com.example.eloem.dartCounter.games.Player
 import com.example.eloem.dartCounter.games.DartGame
 import com.example.eloem.dartCounter.games.Point
 import com.example.eloem.dartCounter.database.getOutGame
+import com.example.eloem.dartCounter.recyclerview.ContextAdapter
+import com.example.eloem.dartCounter.recyclerview.GridSpacingItemDecoration
+import com.example.eloem.dartCounter.util.differentShade
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.components.YAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IValueFormatter
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.mikephil.charting.utils.ViewPortHandler
+import emil.beothy.utilFun.copyOf
 import kotlinx.android.synthetic.main.fragment_overview.*
-import kotlinx.android.synthetic.main.list_item_overview.view.*
-import kotlinx.android.synthetic.main.player_list_item_overview.view.*
-import kotlinx.android.synthetic.main.statistic_card.*
-import kotlinx.android.synthetic.main.statistic_card.view.*
+import kotlinx.android.synthetic.main.item_overview_stats.view.*
+import kotlinx.android.synthetic.main.item_overview_standing.view.*
+import kotlinx.android.synthetic.main.item_overview_select_player.view.*
 
-/**
- * A simple [Fragment] subclass.
- * Use the [OverviewFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class OverviewFragment : androidx.fragment.app.Fragment() {
+class OverviewFragment : Fragment() {
     private lateinit var game: DartGame
+    
+    private val arg: OverviewFragmentArgs by navArgs()
+    
+    private lateinit var selectedPlayer: BooleanArray
+    private var currentDiagram = Diagram.Point
+    
+    enum class Diagram {
+        Point, Turn, PointTurn
+    }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        arguments?.let {
-            val ctx = context
-            if (ctx != null) game = getOutGame(ctx, it.getInt(GAME_ID_PARAM))
-        }
+        game = getOutGame(requireContext(), arg.gameId)
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -43,68 +58,270 @@ class OverviewFragment : androidx.fragment.app.Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         
-        val winner = game.winners
+        val stats = listOf(
+                StatItem(getString(R.string.winner), game.winners.map { Player.empty() to it.name }),
+                StatItem(getString(R.string.standing), game.players.map { it to it.points.toString() }, StatItem.TYPE_STANDING),
+                StatItem(getString(R.string.averagePoints), game.players.map { it to it.averagePoints.toString() }),
+                StatItem(getString(R.string.bustedPoints), game.players.map { it to it.pointsBusted.toString() }),
+                StatItem(getString(R.string.timesBusted), game.players.map { it to it.timesBusted.toString() }),
+                StatItem(getString(R.string.missedThrows), game.players.map { it to it.missedThrows.toString() }),
+                StatItem(getString(R.string.mostHit), game.players.map { it to it.mostHitPoint.toString() })
+        )
         
-        winnerTV.text = if (winner.size == 1){
-            resources.getString(R.string.winMessage, winner[0].name)
-        } else {
-            resources.getString(R.string.drawMessage,
-                    game.winners.joinToString(separator = " ${resources.getString(R.string.and)} "){
-                        it.name
-                    })
+        (activity as HostActivity?)?.apply {
+            onMainFabPressed = null
+            onMenuItemSelected = null
         }
         
-        val p = game.players.copyOf()
-        p.sortBy { it.points }
+        recyclerStats.apply {
+            adapter = StatisticAdapter(stats)
+            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            addItemDecoration(GridSpacingItemDecoration(2,
+                    resources.getDimensionPixelSize(R.dimen.cardGridSpacing),
+                    true))
+        }
         
-        var lastPos = 0
-        var samePosFor = 0
-        p.forEachIndexed { index, player ->
-            playerList.addView(layoutInflater.inflate(R.layout.player_list_item_overview,
-                    playerList, false).apply {
-                
-                placeTV.text = if(index > 0 && p[index -1].points == player.points){
-                    samePosFor ++
-                    lastPos.toString()
-                }else {
-                    lastPos = index + 1 + samePosFor
-                    samePosFor = 0
-                    lastPos.toString()
+        styleDiagram()
+        selectedPlayer = BooleanArray(game.players.size) { true }
+        game.players.forEachIndexed { index, player ->
+            val item = layoutInflater.inflate(R.layout.item_overview_select_player, selectPlayerList, false)
+            item.playerName.text = player.name
+            item.radioButton.setOnClickListener {
+                it as CheckBox
+                selectedPlayer[index] = it.isChecked
+                updateCurrentDiagram()
+            }
+            item.radioButton.isChecked = true
+            selectPlayerList.addView(item)
+        }
+    
+        
+        diagramSpinner.adapter = ArrayAdapter<String>(requireContext(),
+                android.R.layout.simple_list_item_1,
+                resources.getStringArray(R.array.diagrams)).apply {
+            setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
+        }
+        diagramSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                when(position){
+                    0 -> setPointDiagram()
+                    1 -> setTurnDiagram()
+                    2 -> setPointTurnDiagram()
                 }
-                nameTV.text = player.name
-                pointsTV.text = player.points.toString()
-           })
-        }
+            }
         
-        addData(resources.getString(R.string.average)) { it.averagePoints.toString() }
-        addData(resources.getString(R.string.bustedPoints)) { it.pointsBusted.toString() }
-        addData(resources.getString(R.string.timesBusted)) { it.timesBusted.toString() }
-        addData(resources.getString(R.string.missedThrows)) { it.missedThrows.toString() }
-        addData(resources.getString(R.string.mostHit)) { it.mostHitPoint.toString() }
-    }
-    
-    private fun addData(title: String, data: (Player) -> String){
-        val card = layoutInflater.inflate(R.layout.statistic_card, listStatistic, false)
-        card.statisticTitle.text = title
-        game.players.forEach {
-            card.listStatistic.addView(layoutInflater.inflate(R.layout.list_item_overview, listStatistic,
-                    false).apply {
-                playerNameTV.text = it.name
-                dataTV.text = data(it)
-            })
-        }
-        twoDivLin.addView(card)
-    }
-    
-    companion object {
-        @JvmStatic
-        fun newInstance(gameId: Int) = OverviewFragment().apply {
-            arguments = Bundle().apply {
-                putInt(GAME_ID_PARAM, gameId)
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                //nothing
             }
         }
+    }
+
+    private fun updateCurrentDiagram(){
+        when(currentDiagram){
+            Diagram.Point -> setPointDiagram()
+            Diagram.Turn -> setTurnDiagram()
+            Diagram.PointTurn -> setPointTurnDiagram()
+        }
+    }
+    
+    private fun getPointData(enabledPlayers: BooleanArray): MutableList<ILineDataSet>{
+        val colors = resources.getIntArray(R.array.lineColor)
+        val dataSets = mutableListOf<ILineDataSet>()
+        game.players.forEachIndexed { i, player ->
+            if (enabledPlayers[i]) {
+                val entries = mutableListOf<Entry>()
+                entries.add(Entry(0f, (player.startingPoints).toFloat()))
+                
+                player.history.forEachIndexed {j, hTurn ->
+                    entries.add(Entry((j + 1).toFloat(), hTurn.pointsAfter.toFloat()))
+                }
+                
+                val dataSet = LineDataSet(entries, resources.getString(R.string.points, player.name))
+                dataSet.color = colors[i % colors.size]
+                dataSet.setCircleColor(colors[i % colors.size])
+                dataSet.setCircleColorHole(colors[i % colors.size])
+                dataSets.add(dataSet)
+            }
+        }
+        return dataSets
+    }
+    
+    private fun getTurnData(enabledPlayers: BooleanArray): MutableList<ILineDataSet>{
+        val colors = resources.getIntArray(R.array.lineColor)
+        val dataSets = mutableListOf<ILineDataSet>()
+        game.players.forEachIndexed { i, player ->
+            if (enabledPlayers[i]) {
+                val entries = mutableListOf<Entry>()
+                
+                player.history.forEachIndexed {j, hTurn ->
+                    entries.add(Entry((j + 1).toFloat(),
+                            if (j > 0 && hTurn.pointsBefore == hTurn.pointsAfter) 0f
+                            else hTurn.pointsScored.toFloat()))
+                }
+                
+                val dataSet = LineDataSet(entries, resources.getString(R.string.turn, player.name))
+                val graphColor = differentShade(colors[i % colors.size], 7.5f)
+                dataSet.color = graphColor
+                dataSet.setCircleColor(graphColor)
+                dataSet.setCircleColorHole(graphColor)
+                dataSet.valueFormatter = MyValueFormatter()
+                dataSets.add(dataSet)
+            }
+        }
+        return dataSets
+    }
+    
+    fun setPointDiagram(){
+        currentDiagram = Diagram.Point
+        val lineData = LineData(getPointData(selectedPlayer))
+        lineData.setValueTextSize(12f)
+        lineChart.data = lineData
+        hideRightY()
+        lineChart.invalidate()
+    }
+    
+    fun setTurnDiagram(){
+        currentDiagram = Diagram.Turn
+        val lineData = LineData(getTurnData(selectedPlayer))
+        lineData.setValueTextSize(12f)
+        lineChart.data = lineData
+        hideRightY()
+        lineChart.invalidate()
+    }
+    
+    fun setPointTurnDiagram(){
+        currentDiagram = Diagram.PointTurn
+        val turnData = getTurnData(selectedPlayer)
+        val pointData = getPointData(selectedPlayer)
+        turnData.forEach { it.axisDependency = YAxis.AxisDependency.RIGHT }
+        turnData.addAll(pointData)
+        val lineData = LineData(turnData)
+        lineData.setValueTextSize(12f)
+        lineChart.data = lineData
+        showRightY()
+        lineChart.invalidate()
+    }
+    
+    private fun hideRightY(){
+        lineChart.axisRight.apply {
+            setDrawLabels(false)
+            setDrawAxisLine(false)
+            setDrawGridLines(false)
+        }
+    }
+    
+    private fun showRightY(){
+        lineChart.axisRight.apply {
+            setDrawLabels(true)
+            setDrawAxisLine(true)
+            setDrawGridLines(true)
+        }
+    }
+    
+    private fun styleDiagram(){
+        lineChart.xAxis.apply {
+            position = XAxis.XAxisPosition.BOTTOM
+            textSize = 14f
+            setDrawAxisLine(true)
+            setDrawGridLines(false)
+            granularity = 1f
+        }
         
-        private const val GAME_ID_PARAM = "paramGameId"
+        lineChart.axisLeft.apply {
+            textSize = 14f
+            axisMinimum = 0f
+            granularity = 1f
+        }
+        
+        lineChart.axisRight.apply {
+            textSize = 14f
+            axisMinimum = 0f
+            granularity = 1f
+        }
+        
+        lineChart.apply {
+            setPinchZoom(false)
+            isDoubleTapToZoomEnabled = false
+            isScaleYEnabled = false
+            isHighlightPerDragEnabled = false
+            isHighlightPerTapEnabled = false
+            description.isEnabled = false
+            legend.textSize = 14f
+            legend.isWordWrapEnabled = true
+        }
+    }
+    
+    private class MyValueFormatter: IValueFormatter {
+        override fun getFormattedValue(value: Float, entry: Entry?, dataSetIndex: Int,
+                                       viewPortHandler: ViewPortHandler?): String {
+            return value.toInt().toString()
+        }
+    }
+    
+    data class StatItem(val title: String,
+                        val data: List<Pair<Player, String>>,
+                        val type: Int = TYPE_STATS) {
+        
+        companion object {
+            const val TYPE_STATS = 0
+            const val TYPE_STANDING = 1
+            const val TYPE_DIAGRAM = 2
+        }
+    }
+    
+    class StatisticAdapter(val statData: List<StatItem>): ContextAdapter<StatisticAdapter.StatVH>() {
+        
+        class StatVH(layout: View): RecyclerView.ViewHolder(layout) {
+            val title: TextView = layout.findViewById(R.id.statisticTitle)
+            val statList: LinearLayout = layout.findViewById(R.id.listStatistic)
+        }
+        
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatVH = when (viewType) {
+            StatItem.TYPE_STATS -> StatVH(inflate(R.layout.card_statistic, parent))
+            else -> StatVH(inflate(R.layout.card_statistic, parent))
+        }
+    
+        override fun getItemCount(): Int = statData.size
+    
+        override fun onBindViewHolder(holder: StatVH, position: Int) {
+            val statItem = statData[position]
+            holder.title.text = statItem.title
+            holder.statList.removeAllViews()
+            if (holder.itemViewType == StatItem.TYPE_STATS) {
+                statItem.data.forEach {
+                    val listItem = inflate(R.layout.item_overview_stats, holder.statList)
+                    listItem.dataTV.text = it.second
+                    listItem.playerNameTV.text = it.first.name
+                    holder.statList.addView(listItem)
+                }
+            } else {
+                val p = statItem.data.copyOf().map { it.first }.sortedBy { it.points }
+    
+                var lastPos = 0
+                var samePosFor = 0
+                p.forEachIndexed { index, player ->
+                    val listItem = inflate(R.layout.item_overview_standing, holder.statList)
+            
+                    listItem.placeTV.text = if(index > 0 &&
+                            p[index -1].points == player.points){
+                        samePosFor ++
+                        lastPos.toString()
+                    }else {
+                        lastPos = index + 1 + samePosFor
+                        samePosFor = 0
+                        lastPos.toString()
+                    }
+                    listItem.nameTV.text = player.name
+                    listItem.pointsTV.text = player.points.toString()
+    
+                    holder.statList.addView(listItem)
+                }
+            }
+        }
+    
+        override fun getItemViewType(position: Int): Int {
+            return statData[position].type
+        }
     }
 }
 

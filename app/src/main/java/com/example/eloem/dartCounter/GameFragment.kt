@@ -1,42 +1,78 @@
 package com.example.eloem.dartCounter
 
 import android.annotation.SuppressLint
-import android.content.Intent
+import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import android.view.*
 import android.widget.BaseAdapter
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.AndroidViewModel
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.eloem.dartCounter.games.*
 import com.example.eloem.dartCounter.database.getOutGame
 import com.example.eloem.dartCounter.database.updateNewTurn
+import com.example.eloem.dartCounter.util.dp
+import com.example.eloem.dartCounter.util.fragmentViewModel
 import com.google.android.material.button.MaterialButton
-import kotlinx.android.synthetic.main.activity_game.*
+import kotlinx.android.synthetic.main.fragment_game.*
 import kotlinx.android.synthetic.main.item_game_player.view.*
 import kotlinx.android.synthetic.main.turn_overview_list.view.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 
-class GameActivity : AppCompatActivity() {
+class GameFragment : Fragment() {
     //für textViews die die Punkte anteigen
     private lateinit var throwTextView: Array<MaterialButton>
     private lateinit var currentTextView: MaterialButton
-    private var currentTextViewPos = 0
     
-    private lateinit var throwPoints: Turn
+    private val vm: SharedViewModel by fragmentViewModel()
     
     private lateinit var game: OutGame
+    private val arg: GameFragmentArgs by navArgs()
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_game, container, false)
+    }
+    
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+    
+        /*vm = ViewModelProviders.of(this).get(SharedViewModel::class.java)*/
+        throwTextView = arrayOf(throw1mtrButton, throw2mtrButton, throw3mtrButton)
+        
+        currentTextView = throwTextView[vm.curThrow]
+        setCurrentButton(currentTextView, vm.curThrow)
+        
+        throwTextView.forEach { mtrButton -> mtrButton.setOnClickListener { onClick(it) } }
+        Log.d("GameFragment", "now getting viewmodel")
+        game = vm.getOutGame(arg.gameId)
+        game.onGameFinish = {
+            findNavController().navigate(
+                    GameFragmentDirections.actionGameFragmentToOverviewFragment(game.id))
+        }
+        
+        //set up the dartboard
+        board.onPointListener = {
+            vm.throwPoints.points[vm.curThrow] = it
+            setThrowTVText()
+        }
+        board.onNextPointListener = { switchCurrentButton() }
+        board.setScrollObserver(scrollView)
+    
+        (activity as HostActivity?)?.apply {
+            onMainFabPressed = { confirmTurn() }
+            onMenuItemSelected = { false }
+        }
+    
+        setThrowTVText()
+    }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_game)
-        setSupportActionBar(toolbar)
-        
-        throwTextView = arrayOf(throw1mtrButton, throw2mtrButton, throw3mtrButton)
-        currentTextView = throwTextView[0]
-        setCurrentButton(currentTextView, 0)
-        throwPoints = Turn(Array(throwTextView.size) { Point.instanceByPoints(1, 0) })
+        /*setContentView(R.layout.fragment_game)
+        setSupportActionBar(toolbar)*/
         
         /*list.apply {
             adapter = ListAdapter(listOf())
@@ -57,50 +93,8 @@ class GameActivity : AppCompatActivity() {
             })
         }*/
     
-        doAsync {
-            val g = getOutGame(applicationContext, intent.getIntExtra(DART_GAME_EXTRA, 0))
-            uiThread {activity ->
-                game = g
-            
-                game.onGameFinish = {
-                    startActivity(Intent(activity, ScoreScreen::class.java)
-                            .putExtra(ScoreScreen.GAME_ID_ARG, game.id))
-                }
-            
-                setThrowTVText()
-            }
-        }
-        //set up the dartboard
-        board.onPointListener = {
-            throwPoints.points[currentTextViewPos] = it
-            setThrowTVText()
-        }
-        board.onNextPointListener = { switchFocusedTextView() }
-        board.setScrollObserver(scrollView)
-        
-        confirmThrowFab.setOnClickListener { confirmTurn() }
+       
     }
-    
-    /*override fun onPause() {
-        super.onPause()
-        if (!game.isFinished) doAsync { writeGameAndSetFlag(this@GameActivity, game) }
-    }*/
-    
-    /*
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_dart_game, menu)
-        return true
-    }
-    
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId){
-            R.id.confirmThrow -> confirmTurn()
-            R.id.f -> updateClosingInfo()
-            else -> super.onOptionsItemSelected(item)
-        }
-        return true
-    }*/
     
     fun onClick(view: View) {
         if (view is MaterialButton) {
@@ -115,7 +109,7 @@ class GameActivity : AppCompatActivity() {
     private fun setCurrentButton(tv: MaterialButton, pos: Int) {
         fun setActive(mtrButton: MaterialButton, pos: Int) {
             currentTextView = mtrButton
-            currentTextViewPos = pos
+            vm.curThrow = pos
             mtrButton.isActivated = true
             //tv.background = resources.getDrawable(R.drawable.active_background, theme)
         }
@@ -129,39 +123,34 @@ class GameActivity : AppCompatActivity() {
         setActive(tv, pos)
     }
     
-    private fun switchFocusedTextView(){
-        val nextTVPos = currentTextViewPos + 1
+    private fun switchCurrentButton(){
+        val nextTVPos = vm.curThrow + 1
         if (nextTVPos < throwTextView.size) setCurrentButton(throwTextView[nextTVPos], nextTVPos)
     }
     
     private fun setThrowTVText(){
         throwTextView.forEachIndexed { index, tv ->
-            tv.text = throwPoints.points[index].toString()
+            tv.text = vm.throwPoints.points[index].toString()
         }
         
-        val currentStanding = game.nextPlayerThrow(throwPoints, false)
-        updateCurrentPlayerInfo(currentStanding)
+        val currentStanding = game.nextPlayerThrow(vm.throwPoints, false)
         updatePlayerList(currentStanding)
         updateClosingInfo()
     }
     
-    private fun confirmTurn(){
-        game.nextPlayerThrow(throwPoints, true)
-        updateNewTurn(this, game)
+    fun confirmTurn(){
+        game.nextPlayerThrow(vm.throwPoints.deepCopy(), true)
         
-        //new object so the history doesn't get changed | alternative copy throw points then passed to nextPlayerThrow
-        throwPoints = Turn(Array(throwTextView.size) { Point.instanceByPoints(1, 0) }) // reset auf null
+        updateNewTurn(requireContext(), game)
+    
+        // reset auf null
+        vm.throwPoints.points.forEachIndexed { index, _ ->
+            vm.throwPoints.points[index] = Point.instanceByPoints(1, 0)
+        }
         setThrowTVText()
         setCurrentButton(throwTextView[0], 0)
         
         updateClosingInfo()
-    }
-    
-    private fun updateCurrentPlayerInfo(players: Array<Player>){
-        val currPlayer = players[game.currentPlayerPos]
-        
-        currentPlayer.text = currPlayer.name
-        currentPlayerScore.text = currPlayer.points.toString()
     }
     
     private fun updatePlayerList(players: Array<Player>){
@@ -174,7 +163,7 @@ class GameActivity : AppCompatActivity() {
             view.apply {
                 playerTV.text = player.name
                 playerScoreTV.text = player.points.toString()
-                linLayout.setOnClickListener {
+                root.setOnClickListener {
                     @SuppressLint("InflateParams")
                     val layout = layoutInflater.inflate(R.layout.turn_overview_list, null)
                     layout.turnList.adapter = HistoryTurnAdapter(player.history)
@@ -184,6 +173,9 @@ class GameActivity : AppCompatActivity() {
                             .setView(layout)
                             .setNegativeButton(R.string.done) { _, _ -> }
                             .show()
+                }
+                if (player.id == game.currentPlayer.id) {
+                    root.strokeWidth = 1.dp
                 }
             }
             allPlayerList.addView(view)
@@ -246,6 +238,24 @@ class GameActivity : AppCompatActivity() {
         
             return vH
         }
+    }
+    
+    private class SharedViewModel(application: Application): AndroidViewModel(application) {
+        var game: OutGame? = null
+        
+        fun getOutGame(id: Int): OutGame {
+            val g = game
+            if (g != null && g.id == id) return g
+            
+            return getOutGame(getApplication(), id).let {
+                 game = it
+                it
+            }
+        }
+        
+        val throwPoints: Turn = Turn(Array(3) { Point.instanceByPoints(1, 0) })
+        
+        var curThrow: Int = 0
     }
     
     companion object {

@@ -6,29 +6,14 @@
     android:layout_height="match_parent">
 
     <com.example.eloem.dartCounter.recyclerview.RecyclerViewEmptySupport
+        android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.example.eloem.dartCounter.ListOfGamesActivity"
-        android:id="@+id/list"
+        tools:context="com.example.eloem.dartCounter.ListOfGamesFragment"
         android:clipToPadding="false"
+        android:clipChildren="false"
         android:divider="@drawable/transparent"
-        android:paddingTop="4dp"
-        android:layout_marginBottom="?attr/actionBarSize" />
-
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:title="@string/menuListOfGames"
-        android:layout_gravity="bottom"/>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/newGameFAB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_add"
-        android:tint="?attr/colorOnSecondary"
-        app:layout_anchor="@id/toolbar"/>
+        android:paddingTop="4dp" />
 
     <TextView
         android:id="@+id/empty"

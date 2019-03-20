@@ -17,7 +17,8 @@
         android:background="@android:color/transparent"
         android:textSize="@dimen/standardTextSize"
         android:textColor="?attr/colorOnBackground"
-        android:hint="@string/newPlayer" />
+        android:hint="@string/newPlayer"
+        android:imeOptions="flagNoExtractUi"/>
 
     <ImageButton
         android:id="@+id/deleteButton"

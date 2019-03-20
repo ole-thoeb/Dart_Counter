@@ -1,4 +1,4 @@
-package com.example.eloem.dartCounter.helperClasses
+package com.example.eloem.dartCounter.recyclerview
 
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import com.example.eloem.dartCounter.helperClasses.BetterEditText
 import com.example.eloem.dartCounter.util.focusAndShowKeyboard
 import com.example.eloem.dartCounter.util.hideSoftKeyboard
 
@@ -27,6 +28,9 @@ abstract class EditListAdapter<T>(val values: MutableList<T>):
      * parameters are removed item and the position it was removed*/
     var onRemoveItemListener: ((T, Int) -> Unit)? = null
     
+    
+    abstract var valuesOffsetStart: Int
+    
     abstract class EditRowVH(layout: View): RecyclerView.ViewHolder(layout){
         abstract val itemNameET: BetterEditText
         abstract val deleteButton: ImageButton
@@ -41,16 +45,16 @@ abstract class EditListAdapter<T>(val values: MutableList<T>):
         if (holder.itemViewType == VIEW_TYPE_EDIT_ROW) {
             val realHolder = holder as EditRowVH
             with(realHolder.itemNameET) {
-                setText(readEditContent(position), TextView.BufferType.EDITABLE)
+                setText(readEditContent(position - valuesOffsetStart), TextView.BufferType.EDITABLE)
                 onTextChangeListener = { charSequence, betterEditText ->
-                    val pos = realHolder.adapterPosition
-                    if (pos < values.size) {
-                        writeEditContent(pos, charSequence.toString())
+                    val valuePos = realHolder.adapterPosition - valuesOffsetStart
+                    if (valuePos < values.size) {
+                        writeEditContent(valuePos, charSequence.toString())
                     }
                 }
                 onLineBreakListener = { subStrings, view ->
                     val pos = realHolder.adapterPosition
-                    if (subStrings.size == 1) addNewItem(pos + 1, subStrings.first())
+                    if (subStrings.size == 1) addNewItem(pos + 1 - valuesOffsetStart, subStrings.first())
                     else {
                         subStrings.forEachIndexed { index, s ->
                             val insertPos = pos + index + 1
@@ -63,7 +67,7 @@ abstract class EditListAdapter<T>(val values: MutableList<T>):
                 }
                 onDelAtStartListener = { restString, view ->
                     val pos = realHolder.adapterPosition
-                    removeItem(pos, restString)
+                    removeItem(pos - valuesOffsetStart, restString)
                 }
                 onFocusChangeListener = View.OnFocusChangeListener { tv, hasFocus ->
                     with(realHolder.deleteButton) {
@@ -86,7 +90,9 @@ abstract class EditListAdapter<T>(val values: MutableList<T>):
                 lastInsertedPos = null
             }
             
-            realHolder.deleteButton.setOnClickListener { removeItem(realHolder.adapterPosition) }
+            realHolder.deleteButton.setOnClickListener {
+                removeItem(realHolder.adapterPosition - valuesOffsetStart)
+            }
         }
     }
     
@@ -96,20 +102,22 @@ abstract class EditListAdapter<T>(val values: MutableList<T>):
     
     abstract fun newItem(pos: Int, s: String = ""): T
     
+    //pos is position in values
     fun addNewItem(pos: Int, startString: String = ""){
-        lastInsertedPos = pos
+        lastInsertedPos = pos + valuesOffsetStart
         val newItem = newItem(pos, startString)
         values.add(pos, newItem)
         onAddItemListener?.invoke(newItem, pos)
-        notifyItemInserted(pos)
-        recyclerView.scrollToPosition(pos)
+        notifyItemInserted(pos + valuesOffsetStart)
+        recyclerView.scrollToPosition(pos + valuesOffsetStart)
     }
     
+    //pos is position in values
     fun removeItem(pos: Int, remainingText: String = ""){
-        val gvH = recyclerView.findViewHolderForAdapterPosition(pos) ?: return
+        val gvH = recyclerView.findViewHolderForAdapterPosition(pos + valuesOffsetStart) ?: return
         val vH =  gvH as EditRowVH
         if (pos > 0){
-            val posBefore = pos -1
+            val posBefore = pos -1 + valuesOffsetStart
             val beforeVH = recyclerView.findViewHolderForAdapterPosition(posBefore) as EditRowVH
             //if deleted textView had focus switch it to the one before
             if (beforeVH.itemNameET.text.isNotEmpty() && remainingText != "")
@@ -128,7 +136,7 @@ abstract class EditListAdapter<T>(val values: MutableList<T>):
         val removedItem = values[pos]
         values.removeAt(pos)
         onRemoveItemListener?.invoke(removedItem, pos)
-        notifyItemRemoved(pos)
+        notifyItemRemoved(pos + valuesOffsetStart)
     }
     
     companion object {
